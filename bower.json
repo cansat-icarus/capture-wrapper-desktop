@@ -3,5 +3,7 @@
   "private": true,
   "dependencies": {
     "eventEmitter": "^5.1.0",
+    "font-roboto-local": "PolymerElements/font-roboto-local#^1.0.1",
+    "paper-styles": "PolymerElements/paper-styles#^1.1.4",
   }
 }
