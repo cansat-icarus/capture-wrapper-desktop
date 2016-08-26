@@ -1,0 +1,7 @@
+{
+  "name": "capture-wrapper-desktop",
+  "private": true,
+  "dependencies": {
+    "eventEmitter": "^5.1.0",
+  }
+}

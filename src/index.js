@@ -4,6 +4,29 @@ const { EventEmitter } = require('events')
 // Prevent window being garbage collected
 let window
 
+// Event handling thingie
+const eventBridge = new EventEmitter()
+
+// .emit sends events to the outside (ipcRenderer)
+eventBridge._emitInternal = eventBridge.emit
+eventBridge.emit = (event, ...args) => {
+  console.log('emitting', event, ...args)
+  window.webContents.send('asynchronous-message', event, ...args)
+}
+
+// .on/.once/... receive events from the outside (ipcRenderer)
+ipcMain.on('asynchronous-message', (eventObj, ...args) => {
+  console.log('received', ...args)
+  eventBridge._emitInternal(...args)
+})
+
+// Handle close button
+eventBridge.on('close', () => app.quit())
+
+// Export event bridge and window
+exports.bridge = eventBridge
+exports.getWindow = () => window
+
 // Create window when ready
 app.on('ready', () => {
   window = new BrowserWindow({
