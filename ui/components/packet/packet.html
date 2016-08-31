@@ -1,3 +1,4 @@
+<link rel="import" href="../../bower_components/iron-a11y-keys-behavior/iron-a11y-keys-behavior.html">
 <link rel="import" href="../../bower_components/iron-collapse/iron-collapse.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../../bower_components/juicy-jsoneditor/juicy-jsoneditor.html">
@@ -76,9 +77,15 @@
 
     window.CGPacket = Polymer({
       is: 'cg-packet',
-      behaviors: [ Polymer.NeonAnimatableBehavior ],
+      behaviors: [
+        Polymer.NeonAnimatableBehavior,
+        Polymer.IronA11yKeysBehavior
+      ],
       listeners: {
         tap: '_onTap'
+      },
+      keyBindings: {
+        enter: '_onTap'
       },
       hostAttributes: {
         tabindex: '0'
