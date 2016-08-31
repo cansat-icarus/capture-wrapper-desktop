@@ -1,0 +1,270 @@
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../dialog/dialog-protocol.html">
+<link rel="import" href="../indicator/status-indicator.html">
+
+<dom-module id="cg-header-tools">
+  <template>
+    <style include="iron-flex">
+      :host {
+        display: block;
+        --primary-background-color: #fff;
+      }
+
+      .bg-white {
+        background: var(--paper-grey-100);
+        color: var(--paper-grey-700);
+        width: 40px;
+        height: 40px;
+        --paper-button: {
+          min-width: 0;
+        }
+      }
+
+      .bg-green {
+        background: var(--paper-green-500);
+      }
+
+      .bg-orange {
+        background: var(--paper-yellow-900);
+      }
+
+      .bg-red {
+        background: var(--paper-red-500);
+      }
+
+      .color-yellow {
+        color: var(--paper-yellow-600);
+      }
+
+      .name {
+        margin-left: auto;
+        margin-right: auto;
+        padding-right: 0.2em;
+        padding-top: 1em;
+      }
+
+      cg-status-indicator {
+        margin-top: 1em;
+      }
+
+      [hidden] {
+        opacity: 0;
+      }
+    </style>
+    <div class="layout vertical">
+      <div class="layout horizontal">
+        <paper-dropdown-menu id="pathPicker" label="Serial Port Path" horizontal-align="left" no-label-float disabled>
+          <paper-listbox id="pathPickerList" class="dropdown-content" on-iron-select="_portPathSelected">
+            <template is="dom-repeat" items="{{portPathOptions}}" as="port">
+              <paper-item>
+                <iron-icon class="color-yellow" icon="star" hidden$="{{!port.recommend}}"></iron-icon>
+                &nbsp;{{port.comName}}
+              </paper-item>
+            </template>
+          </paper-listbox>
+        </paper-dropdown-menu>
+        <div class="flex"></div>
+        <div class="name">Name: {{name}}</div>
+      </div>
+      <div class="layout horizontal">
+        <paper-button id="openCloseBtn" raised disabled on-click="_openClosePort">
+          {{openCloseLabel}} SerialPort
+        </paper-button>
+        <div class="flex"></div>
+        <div class="layout horizontal center-center">
+          <paper-button raised class="bg-orange" on-click="_runProtocol">Run Protocol Routine...</paper-button>
+          <paper-button raised class="bg-white" on-click="_refresh">
+            <iron-icon icon="refresh"></iron-icon>
+          </paper-button>
+        </div>
+      </div>
+      <div class="layout horizontal">
+        <cg-status-indicator color="{{statusColor}}">{{statusText}}</cg-status-indicator>
+      </div>
+    </div>
+  </template>
+  <script>
+    const statusToColor = {
+      disconnect: '#d32f2f', // --paper-red-700
+      disconnect_force: '#d32f2f', // --paper-red-700
+      close: '#ffa000', // --paper-amber-700
+      open: '#43a047' // // --paper-green-600
+    }
+
+    const statusToLabel = {
+      disconnect: 'Disconnected',
+      disconnect_force: 'Disconnected (FORCED): Recovery impossible',
+      close: 'Closed by user',
+      open: 'Open'
+    }
+
+    const statusToShortLabel = {
+      disconnect: 'OFFLINE',
+      disconnect_force: 'FATAL ERROR',
+      close: 'Offline',
+      open: 'OK'
+    }
+
+    Polymer({
+      is: 'cg-header-tools',
+      properties: {
+        portPathOptions: Array,
+        statusCode: String,
+        name: String,
+        lockUI: {
+          type: Boolean,
+          value: true
+        },
+        statusColor: {
+          notify: true,
+          type: String,
+          computed: '_computeStatusColor(statusCode)'
+        },
+        statusText: {
+          type: String,
+          computed: '_computeStatusText(statusCode)'
+        },
+        statusShortText: {
+          notify: true,
+          type: String,
+          computed: '_computeStatusShortText(statusCode)'
+        },
+        openCloseLabel: {
+          type: String,
+          computed: '_computeOpenCloseBtnLabel(statusCode)'
+        }
+      },
+      observers: [
+        '_lockUIChanged(lockUI)'
+      ],
+      ready () {
+        // Wire up event listeners
+        // Available port options
+        CGBridge.on('serial:availablePorts', ports => this.portPathOptions = ports)
+
+        // Port path
+        CGBridge.on('serial:path', path => {
+          // Find the path index
+          if (this.portPathOptions) {
+            let index = -1
+            for (let i = 0; i < this.portPathOptions.length; i++) {
+              if (this.portPathOptions[i].comName !== path) continue
+
+              index = i
+              break
+            }
+
+            if (index > -1) this.$.pathPickerList.selected = index
+          }
+
+          // Don't enable when UI is locked
+          this.$.pathPicker.disabled = this.lockUI
+        })
+
+        // Port state
+        CGBridge.on('serial:status', status => {
+          console.log(arguments)
+          this.statusCode = status
+        })
+
+        // UI Lock
+        CGBridge.on('lockUI', lockState => {
+          this.lockUI = lockState
+        })
+
+        CGBridge.on('nameReady', (isReady, name) => {
+          console.log('nameReady', isReady, name)
+          if (!isReady) return
+          this.name = name
+        })
+
+        // Auto-select port path
+        CGBridge.on('serial:path:autoselect', () => {
+          this.$.pathPickerList.selected = 0
+        })
+
+        // Expose element to <cg-dialog-protocol>
+        CGBridge._headerTools = this
+
+        // Force emission of every event above (if the window is reloaded, state is maintained)
+        CGBridge.emit('serial:path')
+        CGBridge.emit('serial:status')
+        CGBridge.emit('lockUI')
+        CGBridge.emit('nameReady')
+      },
+      _portPathSelected () {
+        if (this.lockUI) return
+
+        // Get port path
+        const portPath = this.portPathOptions[this.$.pathPickerList.selected].comName
+
+        // Disable the field while port path is being set
+        // Automatically enabled when serial:setPath is received in ready()
+        this.$.pathPicker.disabled = true
+        CGBridge.emit('serial:path', portPath)
+      },
+      _lockUIChanged (lockUI) {
+        this.$.pathPicker.disabled = lockUI
+        this.$.openCloseBtn.disabled = lockUI
+      },
+      _refresh () {
+        // Best way of ensuring UI reload
+        window.location.reload()
+      },
+      _openClosePort () {
+        if (this.lockUI) return
+
+        if (this.openCloseLabel === 'Open') {
+          CGBridge.emit('serial:open')
+        } else if (this.openCloseLabel === 'Close') {
+          CGBridge.emit('serial:close')
+        } else {
+          return alert('Undefined action')
+        }
+
+        // Disable the field while port path is being set
+        // Automatically enabled when status changes in _computeOpenCloseBtnLabel
+        this.$.openCloseBtn.disabled = true
+      },
+      _runProtocol () {
+        document.getElementById('dialog-protocol').open()
+      },
+      _computeStatusColor (statusCode) {
+        console.log('_computeStatusColor', statusCode, statusToColor[statusCode])
+        return statusToColor[statusCode] || '#000000'
+      },
+      _computeStatusText (statusCode) {
+        return `${statusToShortLabel[statusCode]}: ${statusToLabel[statusCode]}` || 'Unknown status'
+      },
+      _computeStatusShortText (statusCode) {
+        return statusToShortLabel[statusCode] || 'Unknown status'
+      },
+      _computeOpenCloseBtnLabel (statusCode) {
+        // Re-enable button (when not locked) after finishing this bit
+        setImmediate(() => this.$.openCloseBtn.disabled = this.lockUI)
+
+        // Button closes when port is open
+        if (statusCode === 'open') {
+          // Set the button color
+          this.$.openCloseBtn.classList.toggle('bg-green', false)
+          this.$.openCloseBtn.classList.toggle('bg-red', true)
+
+          return 'Close'
+        }
+
+        // Button opens when port is not open (closed, disconnected...)
+        // Set the button color
+        this.$.openCloseBtn.classList.toggle('bg-red', false)
+        this.$.openCloseBtn.classList.toggle('bg-green', true)
+
+        return 'Open'
+      },
+    })
+  </script>
+</dom-module>

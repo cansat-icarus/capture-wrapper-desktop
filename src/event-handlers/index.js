@@ -2,9 +2,19 @@ const { getWindow, bridge } = require('../index')
 
 let window = getWindow()
 
+// Track UI lock state
+let uiLock = false
+
 // Track name readiness
 let nameReady = false
 let name
+
+// Handle UI locking
+bridge.on('lockUI', enable => {
+  if (typeof enable === 'boolean') uiLock = enable
+
+  bridge.emit('lockUI', uiLock)
+})
 
 // Set the name
 bridge.on('name', n => {
@@ -34,5 +44,10 @@ bridge.on('nameReady', () => {
   console.log('name ready', nameReady, name)
   bridge.emit('nameReady', nameReady, name)
 })
+
+// Window (un)maximizing
+bridge.on('maximize', () => window.isMaximized() ? window.unmaximize() : window.maximize())
+window.on('maximize', () => bridge.emit('maximize', true))
+window.on('unmaximize', () => bridge.emit('maximize', false))
 
 module.exports = () => nameReady
