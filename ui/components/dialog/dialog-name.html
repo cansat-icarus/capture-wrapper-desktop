@@ -39,7 +39,7 @@
         <paper-input id="name" autofocus auto-validate validator="validateName" invalid="{{nameInvalid}}" label="Station Name" value="{{name}}"></paper-input>
 
         <custom-validator id="validatorNameConfirm" validator-name="validateNameConfirm"></custom-validator>
-        <paper-input id="nameConfirm" auto-validate validator="validateNameConfirm" invalid="{{nameConfirmInvalid}}" label="Confirm Station Name" value="{{nameConfirm}}"></paper-input>
+        <paper-input id="nameConfirm" auto-validate validator="validateNameConfirm" invalid="{{nameConfirmInvalid}}" label="Confirm Station Name" value="{{nameConfirm}}" on-keypress="_autoSubmitOnEnter"></paper-input>
       </div>
       <div class="buttons">
         <paper-spinner active="{{spinnerActive}}"></paper-spinner>
@@ -120,6 +120,9 @@
 
         // Send the name over!
         CGBridge.emit('name', this.name)
+      },
+      _autoSubmitOnEnter (e) {
+        if (e.charCode === 13) this._continue()
       }
     })
   </script>
