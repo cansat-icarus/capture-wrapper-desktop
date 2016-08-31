@@ -25,8 +25,8 @@
         --paper-input-container-input-color: var(--primary-text-color);
       }
 
-      [no-show] {
-        display: none;
+      .buttons {
+        align-items: center;
       }
     </style>
     <paper-dialog id="dialog" entry-animation="slide-from-bottom-animation" exit-animation="slide-up-animation" modal>
@@ -42,9 +42,10 @@
         <paper-input id="nameConfirm" auto-validate validator="validateNameConfirm" invalid="{{nameConfirmInvalid}}" label="Confirm Station Name" value="{{nameConfirm}}"></paper-input>
       </div>
       <div class="buttons">
+        <paper-spinner active="{{spinnerActive}}"></paper-spinner>
         <paper-button on-click="_exit" >Exit Station Software</paper-button>
         <paper-button id="continueBtn" raised disabled="{{continueBtnDisable}}" on-click="_continue">
-          Continue<paper-spinner active="{{spinnerActive}}" no-show="{{spinnerActive}}"></paper-spinner>
+          Continue
         </paper-button>
       </div>
     </paper-dialog>
