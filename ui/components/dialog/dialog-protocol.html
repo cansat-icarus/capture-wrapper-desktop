@@ -1,0 +1,147 @@
+<link rel="import" href="../../bower_components/neon-animation/animations/slide-from-bottom-animation.html">
+<link rel="import" href="../../bower_components/neon-animation/animations/slide-up-animation.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../lib/custom-validator.html">
+<link rel="import" href="../../lib/style.html">
+
+<dom-module id="cg-dialog-protocol">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+
+      paper-dialog {
+        background: #fff;
+      }
+
+      paper-input {
+        --paper-input-container-color: var(--secondary-text-color);
+        --paper-input-container-focus-color: var(--default-primary-color);
+        --paper-input-container-input-color: var(--primary-text-color);
+      }
+
+      .buttons {
+        align-items: center;
+      }
+    </style>
+    <paper-dialog id="dialog" entry-animation="slide-from-bottom-animation" exit-animation="slide-up-animation" modal>
+      <h2>Protocol Routine Runner</h2>
+      <div class="layout vertical">
+        <p>Please choose what protocol routine to run.</p>
+        <p>In order to prevent accidental actions, the name of the routine must be manually typed in the field below.</p>
+
+        <h3>Available Routines</h3>
+        <ul>
+          <template is="dom-repeat" items="{{_routineList}}">
+            <li>{{item.key}}: {{item.description}}</li>
+          </template>
+        </ul>
+
+        <custom-validator id="validatorRoutineName" validator-name="validateRoutineName"></custom-validator>
+        <paper-input id="name" autofocus auto-validate validator="validateRoutineName" invalid="{{nameInvalid}}" label="Routine Name" value="{{name}}" on-keypress="_autoSubmitOnEnter"></paper-input>
+      </div>
+      <div class="buttons">
+        <paper-spinner id="spinner" active="{{spinnerActive}}"></paper-spinner>
+        <paper-button on-click="_cancel" >Cancel</paper-button>
+        <paper-button id="runBtn" raised disabled="{{continueBtnDisable}}" on-click="_run">
+          Run protocol routine
+        </paper-button>
+      </div>
+    </paper-dialog>
+  </template>
+  <script>
+    Polymer({
+      is: 'cg-dialog-protocol',
+      properties: {
+        name: String,
+        nameInvalid: Boolean,
+        continueBtnDisable: {
+          type: Boolean,
+          computed: '_computeContinueBtnDisable(nameInvalid, spinnerActive)'
+        },
+        spinnerActive: {
+          type: Boolean,
+          value: false
+        },
+        _routineList: {
+          type: Array,
+          value: () => [
+            {
+              key: 'auto_open',
+              description: 'Run default opening sequence: select default serial port, open it and lock UI controls.'
+            },
+            {
+              key: 'auto_close',
+              description: 'Run default closing sequence: close serial port and lock critical UI controls.'
+            },
+            {
+              key: 'log',
+              description: 'Open log window.'
+            }
+          ]
+        }
+      },
+      observers: ['_hideSpinner(spinnerActive)'],
+      ready () {
+        this.$.validatorRoutineName.validate = this._validateRoutineName.bind(this)
+
+        // Routine completion handler
+        CGBridge.on('protocol:done', message => {
+          console.log('routine done; message =', message)
+
+          // Stop the spinner
+          this.spinnerActive = false
+
+          // Show message and don't close the dialog (if applicable)
+          if (message) return alert(message)
+
+          // Close and clear input (as if I had pressed cancel)
+          this._cancel()
+        })
+      },
+      open () {
+        this.$.dialog.open()
+      },
+      _validateRoutineName (value) {
+        if (!value) return false
+
+        for (const routineInfo of this._routineList) {
+          if (value === routineInfo.key) return true
+        }
+
+        if (value === 'test') return true
+
+        return false
+      },
+      _computeContinueBtnDisable (nameInvalid, spinnerActive) {
+        return (nameInvalid === false && this.name && !spinnerActive) ? false : true
+      },
+      _hideSpinner(spinnerActive) {
+        this.$.spinner.style.display = spinnerActive ? '' : 'none'
+      },
+      _cancel () {
+        // Close and clear input
+        this.$.dialog.close()
+        this.name = ''
+      },
+      _run () {
+        // Make sure we're good!
+        if (!this.$.name.validate() || this.nameInvalid) return
+
+        // Show the spinner
+        this.spinnerActive = true
+
+        // Run the routine!
+        CGBridge.emit('protocol:run', this.name)
+      },
+      _autoSubmitOnEnter (e) {
+        if (e.charCode === 13) this._run() 
+      }
+    })
+  </script>
+</dom-module>

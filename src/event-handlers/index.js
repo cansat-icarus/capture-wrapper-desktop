@@ -13,6 +13,7 @@ bridge.on('name', n => {
   // Construct station and load the rest of the handlers
   require('../station')(n)
   require('./events')
+  require('./protocol')
 
   // Name is ready
   nameReady = true
