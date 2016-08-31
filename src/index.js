@@ -55,4 +55,7 @@ app.on('ready', () => {
 
   // Start event handlers
   require('./event-handlers')
+
+  // Ensure a clean exit strategy
+  require('./cleanup')
 })
