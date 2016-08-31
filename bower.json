@@ -2,6 +2,7 @@
   "name": "capture-wrapper-desktop",
   "private": true,
   "dependencies": {
+    "app-layout": "PolymerElements/app-layout#^0.10.2",
     "eventEmitter": "^5.1.0",
     "font-roboto-local": "PolymerElements/font-roboto-local#^1.0.1",
     "iron-collapse": "PolymerElements/iron-collapse#^1.2.1",
