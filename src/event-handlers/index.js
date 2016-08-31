@@ -25,6 +25,9 @@ bridge.on('name', n => {
   require('./events')
   require('./protocol')
 
+  // Demo mode (instead of opening a serial port, spit out random packets every second for UI testing)
+  if (process.env.NODE_ENV === 'dev' && process.env.DEMO) require('./demo')
+
   // Name is ready
   nameReady = true
   name = n
