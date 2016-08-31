@@ -52,4 +52,7 @@ app.on('ready', () => {
     // Main window close = app quit
     app.quit()
   })
+
+  // Start event handlers
+  require('./event-handlers')
 })

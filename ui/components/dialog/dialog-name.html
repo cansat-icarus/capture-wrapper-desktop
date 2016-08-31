@@ -1,0 +1,125 @@
+<link rel="import" href="../../bower_components/neon-animation/animations/slide-from-bottom-animation.html">
+<link rel="import" href="../../bower_components/neon-animation/animations/slide-up-animation.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../lib/custom-validator.html">
+<link rel="import" href="../../lib/style.html">
+
+<dom-module id="cg-dialog-name">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+
+      paper-dialog {
+        background: #fff;
+      }
+
+      paper-input {
+        --paper-input-container-color: var(--secondary-text-color);
+        --paper-input-container-focus-color: var(--default-primary-color);
+        --paper-input-container-input-color: var(--primary-text-color);
+      }
+
+      [no-show] {
+        display: none;
+      }
+    </style>
+    <paper-dialog id="dialog" entry-animation="slide-from-bottom-animation" exit-animation="slide-up-animation" modal>
+      <h2>Set station name</h2>
+      <div class="layout vertical">
+        <p>Please set the station name according to protocol. This <strong>cannot</strong> be changed later.</p>
+        <p>If the first field is pre-filled, this station was previously used with that name</p>
+
+        <custom-validator id="validatorName" validator-name="validateName"></custom-validator>
+        <paper-input id="name" autofocus auto-validate validator="validateName" invalid="{{nameInvalid}}" label="Station Name" value="{{name}}"></paper-input>
+
+        <custom-validator id="validatorNameConfirm" validator-name="validateNameConfirm"></custom-validator>
+        <paper-input id="nameConfirm" auto-validate validator="validateNameConfirm" invalid="{{nameConfirmInvalid}}" label="Confirm Station Name" value="{{nameConfirm}}"></paper-input>
+      </div>
+      <div class="buttons">
+        <paper-button on-click="_exit" >Exit Station Software</paper-button>
+        <paper-button id="continueBtn" raised disabled="{{continueBtnDisable}}" on-click="_continue">
+          Continue<paper-spinner active="{{spinnerActive}}" no-show="{{spinnerActive}}"></paper-spinner>
+        </paper-button>
+      </div>
+    </paper-dialog>
+  </template>
+  <script>
+    Polymer({
+      is: 'cg-dialog-name',
+      properties: {
+        name: String,
+        nameConfirm: String,
+        nameInvalid: Boolean,
+        nameConfirmInvalid: Boolean,
+        continueBtnDisable: {
+          type: Boolean,
+          computed: '_computeContinueBtnDisable(nameInvalid, nameConfirmInvalid)'
+        },
+        spinnerActive: {
+          type: Boolean,
+          value: false
+        }
+      },
+      ready () {
+        // Setup validators
+        this.$.validatorName.validate = this._validateName.bind(this)
+        this.$.validatorNameConfirm.validate = this._validateNameConfirm.bind(this)
+
+        // If we have an existing name, fill it in and ask for confirmation
+        this.name = localStorage.oldName || this.name
+
+        // Find if the name is already ready (the page might have been reloaded)
+        CGBridge.once('nameReady', reply => {
+          this._nameReady = reply
+          if (reply === true) {
+            // Close the dialog if the name is already set
+            return this.$.dialog.close()
+          }
+
+          this.$.dialog.open()
+
+          // Focus confirmation field when name already exists
+          if (this.name) setTimeout(() => this.$.nameConfirm.focus(), 200)
+        })
+        CGBridge.emit('nameReady')
+      },
+      _validateName (value) {
+        return !!value
+      },
+      _validateNameConfirm (value) {
+        return !!value && (value === this.name)
+      },
+      _computeContinueBtnDisable (nameInvalid, nameConfirmInvalid) {
+        // The button is not disabled by default with just validations...
+        return (nameInvalid === false && nameConfirmInvalid === false && this.name) ? false : true
+      },
+      _exit () {
+        CGBridge.emit('close')
+      },
+      _continue () {
+        // Make sure we're good!
+        if (!this.$.name.validate() || !this.$.nameConfirm.validate()) return
+
+        // Save name for easier startup
+        localStorage.oldName = this.name
+
+        // Show the spinner
+        this.spinnerActive = true
+
+        // Reload when the name is set
+        CGBridge.on('nameReady', reply => {
+          if (reply === true) window.location.reload()
+        })
+
+        // Send the name over!
+        CGBridge.emit('name', this.name)
+      }
+    })
+  </script>
+</dom-module>
