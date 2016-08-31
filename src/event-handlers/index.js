@@ -34,13 +34,6 @@ bridge.on('name', n => {
 
 // Check if the name is properly set and all is good
 bridge.on('nameReady', () => {
-  // DEVELOPMENT ONLY: circumvent annoying prompt
-  if (!nameReady && process.env.NODE_ENV === 'dev' && !process.env.NO_QUICK_START) {
-    bridge.emit('nameReady', false)
-    bridge._emitInternal('name', 'devstation-do-not-use---ever')
-    return
-  }
-
   console.log('name ready', nameReady, name)
   bridge.emit('nameReady', nameReady, name)
 })
@@ -49,5 +42,14 @@ bridge.on('nameReady', () => {
 bridge.on('maximize', () => window.isMaximized() ? window.unmaximize() : window.maximize())
 window.on('maximize', () => bridge.emit('maximize', true))
 window.on('unmaximize', () => bridge.emit('maximize', false))
+
+// DEVELOPMENT ONLY: circumvent annoying prompt
+if (!nameReady && process.env.NODE_ENV === 'dev' && !process.env.NO_QUICK_START) {
+  // Set a dev-only name!
+  bridge._emitInternal('name', 'devstation-do-not-use---ever')
+
+  // Reload window to fix things
+  setTimeout(() => window.reload(), 200)
+}
 
 module.exports = () => nameReady
