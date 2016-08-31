@@ -10,7 +10,9 @@ let name
 bridge.on('name', n => {
   if (typeof n !== 'string' || name === '') return
 
+  // Construct station and load the rest of the handlers
   require('../station')(n)
+  require('./events')
 
   // Name is ready
   nameReady = true

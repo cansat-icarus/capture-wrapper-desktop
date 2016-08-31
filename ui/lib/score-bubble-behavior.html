@@ -1,0 +1,76 @@
+<script>
+window.CGScoreBubbleBehavior = {
+  properties: {
+    score: Number,
+    value: Number,
+    noAnimation: {
+      type: Boolean,
+      value: false
+    },
+    valueText: {
+      type: String,
+      computed: 'computeValueText(value)'
+    }
+  },
+  observers: [ '_animateIntoScore(score)' ],
+  _animationDuration: 500,
+  _animationStart: 0,
+  created () {
+    this._boundAnimateTick = this._animateTick.bind(this)
+  },
+  _animateIntoScore (score) {
+    if (this.noAnimation) {
+      this.value = this.score
+      this._updateCircleColor()
+      return
+    }
+
+    if (this._animationStart !== 0) {
+      // Restart animation
+      this._animationStart = 0
+
+      return
+    }
+
+    // Here we go!
+    requestAnimationFrame(this._boundAnimateTick)
+  },
+  _animateTick (now = Date.now()) {
+    if (this._animationStart === 0) this._animationStart = now
+
+    const timeRemaining = this._animationDuration - (now - this._animationStart)
+    const valueRemaining = this.score - this.value
+    const step = valueRemaining / (timeRemaining / 16.7)
+    if (timeRemaining <= 0 || Math.abs(valueRemaining) < step) {
+      this.value = this.score
+    } else {
+      this.value += step
+    }
+
+    this._updateCircleColor()
+
+    // Keep going (if needed)
+    if (this.value === this.score) {
+      this._animationStart = 0
+      return
+    }
+    requestAnimationFrame(this._boundAnimateTick)
+  },
+  _updateCircleColor () {},
+  computeValueText (value) {
+    if (!value && value !== 0) return ' ?? '
+    if (value === 100) return '100%'
+    return this.value.toFixed(1)+'%'
+  }
+}
+
+window.CGStationScoreBubbleBehavior = [CGScoreBubbleBehavior, {
+  ready () {
+    // Setup listener for new station scores
+    CGBridge.on('stationScore', score => this.score = score)
+
+    // Request current score if existent
+    CGBridge.emit('stationScore')
+  }
+}]
+</script>

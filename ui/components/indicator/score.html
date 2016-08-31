@@ -1,0 +1,53 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/progress-bubble/progress-bubble.html">
+<link rel="import" href="../../lib/score-bubble-behavior.html">
+<link rel="import" href="../../lib/style.html">
+
+<dom-module id="cg-score">
+  <template>
+    <style is="custom-style" include="iron-flex">
+      :host {
+        display: block;
+      }
+
+      progress-bubble {
+        text-shadow: none;
+        height: 40px;
+        width: 40px;
+        --progress-bubble-stroke-color: #e53935;
+        font-size: 14px;
+        color: #000;
+      }
+    </style>
+    <progress-bubble id="bubble" value="{{value}}" max="100" stroke-width="4">{{valueText}}</progress-bubble>
+  </template>
+  <script>
+    Polymer({
+      is: 'cg-score',
+      properties: {
+        value: Number, // Internal usage only... no real-world use please
+        score: Number
+      },
+      behaviors: [ CGScoreBubbleBehavior ],
+      colors: {
+        red: '#e53935', // --paper-red-600
+        yellow: '#ffa000', // --paper-amber-700
+        green: '#7cb342' // --paper-green-600
+      },
+      ready () {
+        this._circle = this.$.bubble.shadowRoot.getElementById('svgCircle')
+      },
+      _updateCircleColor () {
+        let color = 'yellow'
+        if (this.value < 50) color = 'red'
+        if (this.value > 80) color = 'green'
+
+        // Don't access the DOM unless it's needed
+        if (this._cachedColor === color) return
+
+        this._circle.style.stroke = this.colors[color]
+        this._cachedColor = color
+      }
+    })
+  </script>
+</dom-module>

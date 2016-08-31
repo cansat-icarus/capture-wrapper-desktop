@@ -1,0 +1,43 @@
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="cg-status-indicator">
+  <template>
+    <style is="custom-style" include="iron-flex">
+      :host {
+        display: inline-block;
+        margin-left: 0.1em;
+      }
+      #indicator-text {
+        font-size: medium;
+        padding-left: 0.5em;
+      }
+      #indicatorIcon {
+        border-radius: 50%;
+        width: 14px;
+        height: 14px;
+        border: 2px solid rgba(255, 255, 255, .25);
+      }
+    </style>
+    <div id="indicator" class="layout horizontal center-center">
+      <div id="indicatorIcon"></div>
+      <div id="indicator-text"><content></content></div>
+    </div>
+  </template>
+  <script>
+    Polymer({
+      is: 'cg-status-indicator',
+      properties: {
+        color: {
+          type: String,
+          value: 'black'
+        }
+      },
+      observers: ['_colorChanged(color)'],
+      _colorChanged(color) {
+        console.log('_colorChanged', color)
+        this.$.indicatorIcon.style.backgroundColor = color
+      }
+    })
+  </script>
+</dom-module>

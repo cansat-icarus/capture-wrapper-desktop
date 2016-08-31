@@ -1,0 +1,35 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/progress-bubble/progress-bubble.html">
+<link rel="import" href="../../lib/score-bubble-behavior.html">
+<link rel="import" href="../../lib/style.html">
+
+<dom-module id="cg-station-score-small">
+  <template>
+    <style is="custom-style" include="iron-flex">
+      :host {
+        display: block;
+      }
+
+      progress-bubble {
+        text-shadow: none;
+        height: 32px;
+        width: 32px;
+        --progress-bubble-stroke-color: #fff;
+      }
+
+      #label {
+        font-size: 14px;
+      }
+    </style>
+    <div id="container" class="layout horizontal center-center">
+      <progress-bubble id="bubble" value="{{value}}" max="100" stroke-width="4"></progress-bubble>
+      <div id="label">{{valueText}}</div>
+    </div>
+  </template>
+  <script>
+    Polymer({
+      is: 'cg-station-score-small',
+      behaviors: [ CGStationScoreBubbleBehavior ]
+    })
+  </script>
+</dom-module>
