@@ -1,4 +1,3 @@
-
 <link rel="import" href="../../bower_components/app-layout/app-layout.html">
 <link rel="import" href="../../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
@@ -103,13 +102,13 @@
   <script>
     Polymer({
       is: 'cg-app',
-      _maximizeToggle () {
+      _maximizeToggle() {
         CGBridge.emit('maximize')
       },
-      _close () {
+      _close() {
         CGBridge.emit('close')
       },
-      ready () {
+      ready() {
         // Fix dangling white stripes on the side of the header...
         setTimeout(() => window.dispatchEvent(new Event('resize')), 500)
 

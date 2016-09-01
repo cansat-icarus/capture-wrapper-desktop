@@ -35,16 +35,16 @@
         }
       },
       observers: [ '_updateDisplay(value, noIgnore)' ],
-      attached () {
+      attached() {
         this.forceUpdateDisplay()
       },
-      forceUpdateDisplay () {
+      forceUpdateDisplay() {
         this._updateDisplay(this.value, this.noIgnore)
       },
-      _updateDisplay (value, noIgnore) {
+      _updateDisplay(value, noIgnore) {
         this.style.display = (!value && !noIgnore) ? 'none' : 'block'
       },
-      _blur (event) {
+      _blur() {
         // Remove focus, we don't want it!
         this.blur()
       }

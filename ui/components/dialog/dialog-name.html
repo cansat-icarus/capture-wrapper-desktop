@@ -67,7 +67,7 @@
           value: false
         }
       },
-      ready () {
+      ready() {
         // Setup validators
         this.$.validatorName.validate = this._validateName.bind(this)
         this.$.validatorNameConfirm.validate = this._validateNameConfirm.bind(this)
@@ -78,34 +78,32 @@
         // Find if the name is already ready (the page might have been reloaded)
         CGBridge.once('nameReady', reply => {
           this._nameReady = reply
-          if (reply === true) {
-            // Close the dialog if the name is already set
-            return this.$.dialog.close()
-          }
+          // Close the dialog if the name is already set
+          if(reply === true) return this.$.dialog.close()
 
           this.$.dialog.open()
 
           // Focus confirmation field when name already exists
-          if (this.name) setTimeout(() => this.$.nameConfirm.focus(), 200)
+          if(this.name) setTimeout(() => this.$.nameConfirm.focus(), 200)
         })
         CGBridge.emit('nameReady')
       },
-      _validateName (value) {
+      _validateName(value) {
         return !!value
       },
-      _validateNameConfirm (value) {
+      _validateNameConfirm(value) {
         return !!value && (value === this.name)
       },
-      _computeContinueBtnDisable (nameInvalid, nameConfirmInvalid) {
+      _computeContinueBtnDisable(nameInvalid, nameConfirmInvalid) {
         // The button is not disabled by default with just validations...
-        return (nameInvalid === false && nameConfirmInvalid === false && this.name) ? false : true
+        return !(nameInvalid === false && nameConfirmInvalid === false && this.name)
       },
-      _exit () {
+      _exit() {
         CGBridge.emit('close')
       },
-      _continue () {
+      _continue() {
         // Make sure we're good!
-        if (!this.$.name.validate() || !this.$.nameConfirm.validate()) return
+        if(!this.$.name.validate() || !this.$.nameConfirm.validate()) return
 
         // Save name for easier startup
         localStorage.oldName = this.name
@@ -115,14 +113,14 @@
 
         // Reload when the name is set
         CGBridge.on('nameReady', reply => {
-          if (reply === true) window.location.reload()
+          if(reply === true) window.location.reload()
         })
 
         // Send the name over!
         CGBridge.emit('name', this.name)
       },
-      _autoSubmitOnEnter (e) {
-        if (e.charCode === 13) this._continue()
+      _autoSubmitOnEnter(e) {
+        if(e.charCode === 13) this._continue()
       }
     })
   </script>

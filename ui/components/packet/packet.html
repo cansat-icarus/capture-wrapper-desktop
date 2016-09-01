@@ -106,24 +106,28 @@
         },
         animationConfig: {
           type: Object,
-          value: function () {
-            return {
-              entry: [{
+          value: () => ({
+            entry: [
+              {
                 name: 'slide-from-top-animation',
                 node: this
-              }, {
+              },
+              {
                 name: 'fade-in-animation',
                 node: this
-              }],
-              exit: [{
+              }
+            ],
+            exit: [
+              {
                 name: 'slide-down-animation',
                 node: this
-              }, {
+              },
+              {
                 name: 'fade-out-animation',
                 node: this
-              }]
-            }
-          }
+              }
+            ]
+          })
         }
       },
       typeLabelMap: {
@@ -131,37 +135,37 @@
         i: 'Information',
         s: 'Settings'
       },
-      attached () {
-        for (const el of this.querySelectorAll('cg-packet-field')) {
+      attached() {
+        for(const el of this.querySelectorAll('cg-packet-field'))
           el.forceUpdateDisplay()
-        }
       },
-      _computeTypeLabel (type) {
+      _computeTypeLabel(type) {
         return this.typeLabelMap[type]
       },
-      _computeReceiveDateTime (receivedAt) {
+      _computeReceiveDateTime(receivedAt) {
         const now = moment().utc()
         const received = moment(receivedAt).utc()
 
-        if (now.day() === received.day() && now.diff(received, 'days') <= 1) return ''
+        if(now.day() === received.day() && now.diff(received, 'days') <= 1)
+          return ''
 
         return received.tz(timezone).format('YYYY-MM-DD hh:mm:ss [UTC]Z')
       },
-      _computeReceiveTime (receivedAt) {
+      _computeReceiveTime(receivedAt) {
         const now = moment().utc()
         const received = moment(receivedAt).utc()
 
-        if (now.day() !== received.day() || now.diff(received, 'days') > 1) return ''
+        if(now.day() !== received.day() || now.diff(received, 'days') > 1) return ''
 
         return received.tz(timezone).format('hh:mm:ss [UTC]Z')
       },
-      _onTap (event) {
+      _onTap() {
         // Open/close the collapse
         this.$.collapse.toggle()
       },
-      _handleEditorTap (event) {
+      _handleEditorTap(event) {
         event.stopPropagation()
-      },
+      }
     })
   </script>
 </dom-module>

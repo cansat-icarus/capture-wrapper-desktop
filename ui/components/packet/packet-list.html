@@ -23,12 +23,12 @@
       listeners: {
         'neon-animation-finish': '_insertPacketOnTop'
       },
-      ready () {
+      ready() {
         CGBridge.on('packet', packet => {
           this._packet = packet
 
           // When >20 elements are here, reuse the last one
-          if (this.$.container.childElementCount > 20) {
+          if(this.$.container.childElementCount > 20) {
             this._target = this.$.container.lastChild
 
             // Animate exit of the element being recycled
@@ -43,24 +43,28 @@
           this._insertPacketOnTop()
         })
       },
-      _animateEntry () {
-        this.animationConfig = [{
-          type: 'entry',
-          animatable: this._target
-        }]
+      _animateEntry() {
+        this.animationConfig = [
+          {
+            type: 'entry',
+            animatable: this._target
+          }
+        ]
 
         this.playAnimation()
       },
-      _animateExit () {
-        this.animationConfig = [{
-          type: 'exit',
-          animatable: this._target
-        }]
+      _animateExit() {
+        this.animationConfig = [
+          {
+            type: 'exit',
+            animatable: this._target
+          }
+        ]
 
         this.playAnimation()
       },
-      _insertPacketOnTop () {
-        if (!this._target) return
+      _insertPacketOnTop() {
+        if(!this._target) return
 
         // Set the packet to what it should be
         this._target.packet = this._packet

@@ -38,12 +38,11 @@ app.on('ready', () => {
     frame: false
   })
 
-  if (process.env.NODE_ENV === 'dev') {
-    // Wait a bit for browser-sync
+  // Wait a bit for browser-sync
+  if(process.env.NODE_ENV === 'dev')
     setTimeout(() => window.loadURL('http://localhost:3000/'), 5000)
-  } else {
+  else
     window.loadURL(`file:${__dirname}/../ui/index.html`)
-  }
 
   // Dereference the window, let GC do its thing
   window.on('closed', () => {

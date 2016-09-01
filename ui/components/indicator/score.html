@@ -34,16 +34,16 @@
         yellow: '#ffa000', // --paper-amber-700
         green: '#7cb342' // --paper-green-600
       },
-      ready () {
+      ready() {
         this._circle = this.$.bubble.shadowRoot.getElementById('svgCircle')
       },
-      _updateCircleColor () {
+      _updateCircleColor() {
         let color = 'yellow'
-        if (this.value < 50) color = 'red'
-        if (this.value > 80) color = 'green'
+        if(this.value < 50) color = 'red'
+        if(this.value > 80) color = 'green'
 
         // Don't access the DOM unless it's needed
-        if (this._cachedColor === color) return
+        if(this._cachedColor === color) return
 
         this._circle.style.stroke = this.colors[color]
         this._cachedColor = color

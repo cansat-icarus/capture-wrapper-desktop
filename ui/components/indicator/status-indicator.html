@@ -33,9 +33,8 @@
           value: 'black'
         }
       },
-      observers: ['_colorChanged(color)'],
+      observers: [ '_colorChanged(color)' ],
       _colorChanged(color) {
-        console.log('_colorChanged', color)
         this.$.indicatorIcon.style.backgroundColor = color
       }
     })

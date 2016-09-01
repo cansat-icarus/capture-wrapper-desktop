@@ -7,7 +7,7 @@ bridge.on('serial:availablePorts', () => {
 })
 
 bridge.on('serial:path', path => {
-  if (path) {
+  if(path) {
     // Set path
     return station.serial.setPath(path)
       .then(() => bridge._emitInternal('serial:path'))

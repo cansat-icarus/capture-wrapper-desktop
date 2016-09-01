@@ -143,7 +143,7 @@
       observers: [
         '_lockUIChanged(lockUI)'
       ],
-      ready () {
+      ready() {
         // Wire up event listeners
         // Available port options
         CGBridge.on('serial:availablePorts', ports => this.portPathOptions = ports)
@@ -151,16 +151,16 @@
         // Port path
         CGBridge.on('serial:path', path => {
           // Find the path index
-          if (this.portPathOptions) {
+          if(this.portPathOptions) {
             let index = -1
-            for (let i = 0; i < this.portPathOptions.length; i++) {
-              if (this.portPathOptions[i].comName !== path) continue
+            for(let i = 0; i < this.portPathOptions.length; i++) {
+              if(this.portPathOptions[i].comName !== path) continue
 
               index = i
               break
             }
 
-            if (index > -1) this.$.pathPickerList.selected = index
+            if(index > -1) this.$.pathPickerList.selected = index
           }
 
           // Don't enable when UI is locked
@@ -169,7 +169,6 @@
 
         // Port state
         CGBridge.on('serial:status', status => {
-          console.log(arguments)
           this.statusCode = status
         })
 
@@ -179,8 +178,7 @@
         })
 
         CGBridge.on('nameReady', (isReady, name) => {
-          console.log('nameReady', isReady, name)
-          if (!isReady) return
+          if(!isReady) return
           this.name = name
         })
 
@@ -198,8 +196,8 @@
         CGBridge.emit('lockUI')
         CGBridge.emit('nameReady')
       },
-      _portPathSelected () {
-        if (this.lockUI) return
+      _portPathSelected() {
+        if(this.lockUI) return
 
         // Get port path
         const portPath = this.portPathOptions[this.$.pathPickerList.selected].comName
@@ -209,48 +207,46 @@
         this.$.pathPicker.disabled = true
         CGBridge.emit('serial:path', portPath)
       },
-      _lockUIChanged (lockUI) {
+      _lockUIChanged(lockUI) {
         this.$.pathPicker.disabled = lockUI
         this.$.openCloseBtn.disabled = lockUI
       },
-      _refresh () {
+      _refresh() {
         // Best way of ensuring UI reload
         window.location.reload()
       },
-      _openClosePort () {
-        if (this.lockUI) return
+      _openClosePort() {
+        if(this.lockUI) return
 
-        if (this.openCloseLabel === 'Open') {
+        if(this.openCloseLabel === 'Open')
           CGBridge.emit('serial:open')
-        } else if (this.openCloseLabel === 'Close') {
+        else if(this.openCloseLabel === 'Close')
           CGBridge.emit('serial:close')
-        } else {
-          return alert('Undefined action')
-        }
+        else
+          return alert('Undefined action') // eslint-disable-line no-alert
 
         // Disable the field while port path is being set
         // Automatically enabled when status changes in _computeOpenCloseBtnLabel
         this.$.openCloseBtn.disabled = true
       },
-      _runProtocol () {
+      _runProtocol() {
         document.getElementById('dialog-protocol').open()
       },
-      _computeStatusColor (statusCode) {
-        console.log('_computeStatusColor', statusCode, statusToColor[statusCode])
+      _computeStatusColor(statusCode) {
         return statusToColor[statusCode] || '#000000'
       },
-      _computeStatusText (statusCode) {
+      _computeStatusText(statusCode) {
         return `${statusToShortLabel[statusCode]}: ${statusToLabel[statusCode]}` || 'Unknown status'
       },
-      _computeStatusShortText (statusCode) {
+      _computeStatusShortText(statusCode) {
         return statusToShortLabel[statusCode] || 'Unknown status'
       },
-      _computeOpenCloseBtnLabel (statusCode) {
+      _computeOpenCloseBtnLabel(statusCode) {
         // Re-enable button (when not locked) after finishing this bit
         setImmediate(() => this.$.openCloseBtn.disabled = this.lockUI)
 
         // Button closes when port is open
-        if (statusCode === 'open') {
+        if(statusCode === 'open') {
           // Set the button color
           this.$.openCloseBtn.classList.toggle('bg-green', false)
           this.$.openCloseBtn.classList.toggle('bg-red', true)
@@ -264,7 +260,7 @@
         this.$.openCloseBtn.classList.toggle('bg-green', true)
 
         return 'Open'
-      },
+      }
     })
   </script>
 </dom-module>

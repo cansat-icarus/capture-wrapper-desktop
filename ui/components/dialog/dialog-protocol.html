@@ -94,8 +94,8 @@
           ]
         }
       },
-      observers: ['_hideSpinner(spinnerActive)'],
-      ready () {
+      observers: [ '_hideSpinner(spinnerActive)' ],
+      ready() {
         this.$.validatorRoutineName.validate = this._validateRoutineName.bind(this)
 
         // Routine completion handler
@@ -106,40 +106,37 @@
           this.spinnerActive = false
 
           // Show message and don't close the dialog (if applicable)
-          if (message) return alert(message)
+          // eslint-disable-next-line no-alert
+          if(message) return alert(message)
 
           // Close and clear input (as if I had pressed cancel)
           this._cancel()
         })
       },
-      open () {
+      open() {
         this.$.dialog.open()
       },
-      _validateRoutineName (value) {
-        if (!value) return false
+      _validateRoutineName(value) {
+        if(!value) return false
 
-        for (const routineInfo of this._routineList) {
-          if (value === routineInfo.key) return true
-        }
+        for(const routineInfo of this._routineList)
+          if(value === routineInfo.key) return true
 
-        if (value === 'test') return true
+        if(value === 'test') return true
 
         return false
       },
-      _computeContinueBtnDisable (nameInvalid, spinnerActive) {
-        return (nameInvalid === false && this.name && !spinnerActive) ? false : true
+      _computeContinueBtnDisable(nameInvalid, spinnerActive) {
+        return !(nameInvalid === false && this.name && !spinnerActive)
       },
-      _hideSpinner(spinnerActive) {
-        this.$.spinner.style.display = spinnerActive ? '' : 'none'
-      },
-      _cancel () {
+      _cancel() {
         // Close and clear input
         this.$.dialog.close()
         this.name = ''
       },
-      _run () {
+      _run() {
         // Make sure we're good!
-        if (!this.$.name.validate() || this.nameInvalid) return
+        if(!this.$.name.validate() || this.nameInvalid) return
 
         // Show the spinner
         this.spinnerActive = true
@@ -147,8 +144,8 @@
         // Run the routine!
         CGBridge.emit('protocol:run', this.name)
       },
-      _autoSubmitOnEnter (e) {
-        if (e.charCode === 13) this._run() 
+      _autoSubmitOnEnter(e) {
+        if(e.charCode === 13) this._run()
       }
     })
   </script>

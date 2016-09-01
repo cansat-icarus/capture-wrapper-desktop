@@ -1,6 +1,6 @@
 const { getWindow, bridge } = require('../index')
 
-let window = getWindow()
+const window = getWindow()
 
 // Track UI lock state
 let uiLock = false
@@ -11,14 +11,14 @@ let name
 
 // Handle UI locking
 bridge.on('lockUI', enable => {
-  if (typeof enable === 'boolean') uiLock = enable
+  if(typeof enable === 'boolean') uiLock = enable
 
   bridge.emit('lockUI', uiLock)
 })
 
 // Set the name
 bridge.on('name', n => {
-  if (typeof n !== 'string' || name === '') return
+  if(typeof n !== 'string' || name === '') return
 
   // Construct station and load the rest of the handlers
   require('../station')(n)
@@ -26,7 +26,7 @@ bridge.on('name', n => {
   require('./protocol')
 
   // Demo mode (instead of opening a serial port, spit out random packets every second for UI testing)
-  if (process.env.NODE_ENV === 'dev' && process.env.DEMO) require('./demo')
+  if(process.env.NODE_ENV === 'dev' && process.env.DEMO) require('./demo')
 
   // Name is ready
   nameReady = true
@@ -47,7 +47,7 @@ window.on('maximize', () => bridge.emit('maximize', true))
 window.on('unmaximize', () => bridge.emit('maximize', false))
 
 // DEVELOPMENT ONLY: circumvent annoying prompt
-if (!nameReady && process.env.NODE_ENV === 'dev' && !process.env.NO_QUICK_START) {
+if(!nameReady && process.env.NODE_ENV === 'dev' && !process.env.NO_QUICK_START) {
   // Set a dev-only name!
   bridge._emitInternal('name', 'devstation-do-not-use---ever')
 

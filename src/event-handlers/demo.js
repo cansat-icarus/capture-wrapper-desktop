@@ -1,8 +1,8 @@
 // ONLY FOR UI DEMONSTRATION PURPOSES
 const station = require('../station')()
 
-function * randomIntGen (min, max) {
-  while (true) yield Math.floor(Math.random() * (max - min + 1)) + min
+function * randomIntGen(min, max) {
+  while(true) yield Math.floor(Math.random() * (max - min + 1)) + min
 }
 
 const templates = [
@@ -21,7 +21,7 @@ const templates = [
       asd: [
         {
           b: [
-            {a: 'hi there!'}
+            { a: 'hi there!' }
           ]
         }
       ]
@@ -39,10 +39,10 @@ const templates = [
   }
 ]
 
-function * randomTemplateGen () {
+function * randomTemplateGen() {
   const randomIndex = randomIntGen(0, 2)
   const randomScore = randomIntGen(0, 100)
-  while (true) {
+  while(true) {
     const packet = Object.assign({}, templates[randomIndex.next().value])
     packet.receivedAt = Date.now()
     packet.score = randomScore.next().value
@@ -53,8 +53,8 @@ function * randomTemplateGen () {
 
 const randomPacket = randomTemplateGen()
 let interval
-function start () {
-  if (!interval) {
+function start() {
+  if(!interval) {
     console.log('demo open')
     interval = setInterval(() => {
       station.serial.emit('data', randomPacket.next().value)
@@ -64,8 +64,8 @@ function start () {
   return Promise.resolve()
 }
 
-function stop () {
-  if (interval) {
+function stop() {
+  if(interval) {
     console.log('demo close')
     clearInterval(interval)
     interval = undefined
@@ -83,7 +83,7 @@ station.serial.close = stop.bind(this)
 
 // Monkey-patch station.classifier
 station.classifier.classifyPacket = (packet, upd = true) => {
-  if (upd) station.classifier.classifyStationInc(packet.score)
+  if(upd) station.classifier.classifyStationInc(packet.score)
   return packet.score
 }
 
