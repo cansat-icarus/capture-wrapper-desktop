@@ -191,10 +191,12 @@
         CGBridge._headerTools = this
 
         // Force emission of every event above (if the window is reloaded, state is maintained)
-        CGBridge.emit('serial:path')
-        CGBridge.emit('serial:status')
+        CGBridge.emit('serial:availablePorts') // This one first to avoid concurrency issues
         CGBridge.emit('lockUI')
         CGBridge.emit('nameReady')
+        CGBridge.emit('serial:status')
+        CGBridge.emit('serial:path')
+
       },
       _portPathSelected() {
         if(this.lockUI) return
