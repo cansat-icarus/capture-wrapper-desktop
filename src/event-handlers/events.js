@@ -7,11 +7,8 @@ bridge.on('serial:availablePorts', () => {
 })
 
 bridge.on('serial:path', path => {
-  if(path) {
-    // Set path
-    return station.serial.setPath(path)
-      .then(() => bridge._emitInternal('serial:path'))
-  }
+  // Set path
+  if(path) return station.serial.setPath(path)
 
   // Get path
   bridge.emit('serial:path', station.serial._path)
@@ -26,4 +23,5 @@ bridge.on('stationScore', () => bridge.emit('stationScore', station.classifier.s
 
 station.on('packet', packet => bridge.emit('packet', packet))
 station.serial.on('stateChange', state => bridge.emit('serial:status', state))
+station.serial.on('pathChange', path => bridge.emit('serial:path', path))
 station.classifier.on('stationScore', score => bridge.emit('stationScore', score))
