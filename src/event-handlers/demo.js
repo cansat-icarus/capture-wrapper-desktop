@@ -74,6 +74,10 @@ function stop() {
   return Promise.resolve()
 }
 
+// Any port here is useless
+station.serial._destroyPort()
+station.serial._createPort = () => Promise.resolve()
+
 // Monkey-patch station.db
 station.db = { put: () => Promise.resolve() }
 
@@ -87,5 +91,5 @@ station.classifier.classifyPacket = (packet, upd = true) => {
   return packet.score
 }
 
-// Any port here is useless
-station.serial._destroyPort()
+// Monkey-patch port list to allow people to "open" the demo port
+station.getAvailablePorts = () => Promise.resolve([ { comName: 'DEMO MODE' } ])
