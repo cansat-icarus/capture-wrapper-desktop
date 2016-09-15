@@ -19,8 +19,8 @@
   },
   "devDependencies": {
     "browser-sync": "^2.14.0",
-    "electron-packager": "^7.0.0",
     "electron": "1.4.0",
+    "electron-packager": "^8.0.0",
     "electron-rebuild": "^1.2.0",
     "eslint-plugin-ava": "^2.5.0",
     "eslint-plugin-html": "^1.5.2",
