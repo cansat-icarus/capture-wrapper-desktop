@@ -10,13 +10,11 @@ const eventBridge = new EventEmitter()
 // .emit sends events to the outside (ipcRenderer)
 eventBridge._emitInternal = eventBridge.emit
 eventBridge.emit = (event, ...args) => {
-  console.log('emitting', event, ...args)
   window.webContents.send('asynchronous-message', event, ...args)
 }
 
 // .on/.once/... receive events from the outside (ipcRenderer)
 ipcMain.on('asynchronous-message', (eventObj, ...args) => {
-  console.log('received', ...args)
   eventBridge._emitInternal(...args)
 })
 
@@ -39,10 +37,13 @@ app.on('ready', () => {
   })
 
   // Wait a bit for browser-sync
-  if(process.env.NODE_ENV === 'dev')
+  if(process.env.NODE_ENV === 'dev') {
+    require('devtron').install()
+
     setTimeout(() => window.loadURL('http://localhost:3000/'), 5000)
-  else
+  } else {
     window.loadURL(`file:${__dirname}/../ui/index.html`)
+  }
 
   // Dereference the window, let GC do its thing
   window.on('closed', () => {

@@ -12,7 +12,6 @@ CGBridge.emit = (event, ...args) => {
 
 // .on()/.once() receive events from the main process
 ipcRenderer.on('asynchronous-message', (eventObj, ...args) => {
-  console.log(eventObj, ...args)
   CGBridge._emitInternal(...args, eventObj)
 })
 
