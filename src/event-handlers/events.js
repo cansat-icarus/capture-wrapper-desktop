@@ -1,4 +1,4 @@
-const { bridge } = require('../index')
+const { bridge } = require('../main-window')
 const station = require('../station')()
 
 bridge.on('serial:availablePorts', () => {

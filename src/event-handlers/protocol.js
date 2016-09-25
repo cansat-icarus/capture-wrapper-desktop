@@ -1,4 +1,5 @@
-const { bridge } = require('../index')
+const { bridge } = require('../main-window')
+const { app } = require('electron')
 const station = require('../station')()
 
 const routines = {
