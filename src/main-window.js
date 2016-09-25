@@ -11,11 +11,9 @@ const window = new BrowserWindow({
   frame: false
 })
 
-// Dereference the window, let GC do its thing
+// Main window close = app quit
 window.on('closed', () => {
-  window = null
-
-  // Main window close = app quit
+  // No need to dereference window, we're quitting
   app.quit()
 })
 
