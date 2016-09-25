@@ -1,11 +1,10 @@
-const isStationCreated = require('./event-handlers')
 const { getWindow } = require('./index')
 const { dialog, app } = require('electron')
 
 let cleanup
 
 app.on('before-quit', event => {
-  if(!isStationCreated() || cleanup === true) {
+  if(!require('../station')() || cleanup === true) {
     console.log('Cleanup done. Quitting...')
     return true
   }
@@ -44,3 +43,10 @@ app.on('before-quit', event => {
 
   return false
 })
+
+exports.cleanup = () => {
+  return require('./station')().cleanup()
+    .then(() => {
+      cleanup = true
+    })
+}

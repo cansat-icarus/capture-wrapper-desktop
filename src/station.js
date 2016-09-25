@@ -4,6 +4,7 @@ let station
 
 module.exports = name => {
   if(station) return station
+  if(!name) return false
 
   station = new Station(name)
   return station
