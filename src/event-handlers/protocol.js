@@ -24,6 +24,10 @@ const routines = {
     bridge._emitInternal('lockUI', false)
     return Promise.resolve()
   },
+  nuke_all_the_things() {
+    // Delete data and quit
+    return Promise.resolve(`NUKE ROUTINE NOT IMPLEMENTED, DELETE ${app.getPath('userData')} MANUALLY`)
+  },
   test() {
     return new Promise(resolve => setTimeout(resolve, 10000))
   }
