@@ -34,7 +34,7 @@ app.on('ready', () => {
   // DEVELOPMENT ONLY: circumvent annoying prompt
   if(process.env.NODE_ENV === 'dev' && !process.env.NO_QUICK_START) {
     // Set a dev-only name!
-    messageListener('devstation-do-not-use---ever', 'devstation-do-not-use---ever')
+    messageListener(null, 'devstation-do-not-use---ever', 'devstation-do-not-use---ever')
     return
   }
 
