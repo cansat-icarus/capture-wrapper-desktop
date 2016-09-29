@@ -17,7 +17,7 @@ window.on('closed', () => {
   app.quit()
 })
 
-if(process.env.NODE_ENV === 'dev')
+if(process.env.NODE_ENV === 'dev' && process.env.BROWSER_SYNC !== 'false')
   window.loadURL('http://localhost:3000/')
 else
   window.loadURL(`file:${__dirname}/../ui/index.html`)

@@ -46,7 +46,7 @@ app.on('ready', () => {
   })
 
   // Wait a bit for browser-sync when necessary
-  if(process.env.NODE_ENV === 'dev')
+  if(process.env.NODE_ENV === 'dev' && process.env.BROWSER_SYNC !== 'false')
     setTimeout(() => dialogWindow.loadURL('http://localhost:3000/name-dialog.html'), 2000)
   else
     dialogWindow.loadURL(`file:${__dirname}/../ui/name-dialog.html`)
