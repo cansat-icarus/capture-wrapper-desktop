@@ -18,7 +18,10 @@
     "postinstall": "IOJS_ORG_MIRROR=https://atom.io/download/atom-shell npm rebuild --runtime=electron --target=1.4.0 --arch=x64 --build-from-source"
   },
   "dependencies": {
-    "capture-lib": "file:../capture-lib"
+    "bunyan": "^1.8.1",
+    "capture-lib": "file:../capture-lib",
+    "pouchdb": "^6.0.5",
+    "rimraf": "^2.5.4"
   },
   "devDependencies": {
     "browser-sync": "^2.14.0",
