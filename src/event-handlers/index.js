@@ -1,4 +1,5 @@
 const { window, bridge } = require('../main-window')
+const station = require('../station')()
 
 // Track UI lock state
 let uiLock = false
@@ -14,6 +15,9 @@ bridge.on('lockUI', enable => {
 bridge.on('maximize', () => window.isMaximized() ? window.unmaximize() : window.maximize())
 window.on('maximize', () => bridge.emit('maximize', true))
 window.on('unmaximize', () => bridge.emit('maximize', false))
+
+// Name getter
+bridge.on('name', () => bridge.emit('name', station.name))
 
 // Load the rest of event handlers
 require('./events')

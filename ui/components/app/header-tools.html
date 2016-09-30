@@ -188,8 +188,7 @@
           this.lockUI = lockState
         })
 
-        CGBridge.on('nameReady', (isReady, name) => {
-          if(!isReady) return
+        CGBridge.on('name', name => {
           this.name = name
         })
 
@@ -199,7 +198,7 @@
         // Force emission of every event above (if the window is reloaded, state is maintained)
         CGBridge.emit('serial:availablePorts') // This one first to avoid concurrency issues
         CGBridge.emit('lockUI')
-        CGBridge.emit('nameReady')
+        CGBridge.emit('name')
         CGBridge.emit('serial:status')
         CGBridge.emit('serial:path')
 

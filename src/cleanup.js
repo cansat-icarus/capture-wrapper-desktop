@@ -1,10 +1,10 @@
-const { getWindow } = require('./index')
+const { window } = require('./main-window')
 const { dialog, app } = require('electron')
 
 let cleanup
 
 app.on('before-quit', event => {
-  if(!require('../station')() || cleanup === true) {
+  if(!require('./station')() || cleanup === true) {
     console.log('Cleanup done. Quitting...')
     return true
   }
@@ -22,7 +22,7 @@ app.on('before-quit', event => {
       cleanup = true
       app.quit()
     } else {
-      dialog.showMessageBox(getWindow(), {
+      dialog.showMessageBox(window, {
         type: 'question',
         title: 'Confirm exit',
         message: 'Are you REALLY sure you want to quit?',

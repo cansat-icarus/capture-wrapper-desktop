@@ -1,5 +1,5 @@
 const { app, BrowserWindow, ipcMain } = require('electron')
-const { EventEmitter } = require('events')
+const EventBridge = require('./lib/bridge')
 
 // Prevent window being garbage collected
 const window = new BrowserWindow({
@@ -18,30 +18,16 @@ window.on('closed', () => {
 })
 
 if(process.env.NODE_ENV === 'dev' && process.env.BROWSER_SYNC !== 'false')
-  window.loadURL('http://localhost:3000/')
+  window.loadURL('http://localhost:3000/main-window.html')
 else
-  window.loadURL(`file:${__dirname}/../ui/index.html`)
-
-// Event handling thingie
-const eventBridge = new EventEmitter()
-
-// .emit sends events to the outside (ipcRenderer)
-eventBridge._emitInternal = eventBridge.emit
-eventBridge.emit = (event, ...args) => {
-  window.webContents.send('asynchronous-message', event, ...args)
-}
-
-// .on/.once/... receive events from the outside (ipcRenderer)
-ipcMain.on('asynchronous-message', (eventObj, ...args) => {
-  eventBridge._emitInternal(...args)
-})
-
-// Handle close button
-eventBridge.on('close', () => app.quit())
+  window.loadURL(`file:${__dirname}/../ui/main-window.html`)
 
 // Export event bridge and window
-exports.bridge = eventBridge
+exports.bridge = new EventBridge(ipcMain, window)
 exports.window = window
+
+// Handle close button
+exports.bridge.on('close', () => app.quit())
 
 // Start event handlers
 require('./event-handlers')
