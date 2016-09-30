@@ -73,7 +73,7 @@
     </paper-material>
   </template>
   <script>
-    const timezone = Intl.DateTimeFormat().resolved.timeZone
+    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || Intl.DateTimeFormat().resolved.timeZone
 
     window.CGPacket = Polymer({
       is: 'cg-packet',
@@ -149,7 +149,7 @@
         if(now.day() === received.day() && now.diff(received, 'days') <= 1)
           return ''
 
-        return received.tz(timezone).format('YYYY-MM-DD hh:mm:ss [UTC]Z')
+        return received.tz(timezone).format('YYYY-MM-DD HH:mm:ss [UTC]Z')
       },
       _computeReceiveTime(receivedAt) {
         const now = moment().utc()
@@ -157,7 +157,7 @@
 
         if(now.day() !== received.day() || now.diff(received, 'days') > 1) return ''
 
-        return received.tz(timezone).format('hh:mm:ss [UTC]Z')
+        return received.tz(timezone).format('HH:mm:ss [UTC]Z')
       },
       _onTap() {
         // Open/close the collapse
