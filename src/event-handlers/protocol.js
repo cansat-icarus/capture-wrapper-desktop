@@ -14,7 +14,8 @@ const routines = {
       .then(routines.ui_lock)
   },
   log() {
-    return Promise.resolve('LOG ROUTINE NOT IMPLEMENTED')
+    require('../log-window').show()
+    return Promise.resolve()
   },
   ui_lock() {
     bridge._emitInternal('lockUI', true)
