@@ -17,6 +17,7 @@
             ],
             "env": {
                 "NODE_ENV": "dev",
+                "DEMO": "1",
                 "BROWSER_SYNC": "false"
             },
             "console": "internalConsole",
