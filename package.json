@@ -8,14 +8,13 @@
     "name": "André Breda",
     "email": "addobandre99@gmail.com"
   },
-  "electronVersion": "1.4.3",
+  "electronVersion": "1.4.14",
   "main": "src/index.js",
   "scripts": {
     "test": "xo",
     "build": "export NODE_ENV='production'; electron-packager . $npm_package_productName --out=dist --ignore='^/dist$' --prune --asar --all --version=$npm_package_electronVersion",
     "start": "NODE_ENV='dev' electron . & browser-sync start --server ui --files ui --no-open",
-    "postinstall-broken-dont-use-for-now": "electron-rebuild -e=node_modules/electron",
-    "postinstall": "IOJS_ORG_MIRROR=https://atom.io/download/atom-shell npm rebuild --runtime=electron --target=1.4.0 --arch=x64 --build-from-source"
+    "postinstall": "electron-rebuild"
   },
   "dependencies": {
     "camelcase": "^4.0.0",
@@ -23,14 +22,14 @@
     "rimraf": "^2.5.4"
   },
   "devDependencies": {
-    "browser-sync": "^2.17.3",
+    "browser-sync": "^2.18.6",
     "devtron": "^1.4.0",
-    "electron": "1.4.3",
-    "electron-packager": "^8.1.0",
-    "electron-rebuild": "^1.2.1",
-    "eslint-plugin-ava": "^3.1.1",
+    "electron": "^1.4.14",
+    "electron-packager": "^8.5.0",
+    "electron-rebuild": "^1.5.6",
     "eslint-plugin-html": "^1.5.3",
-    "xo": "^0.17.0"
+    "eslint-plugin-json": "^1.2.0",
+    "xo": "^0.17.1"
   },
   "xo": {
     "esnext": true,
