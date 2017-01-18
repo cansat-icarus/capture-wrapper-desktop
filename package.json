@@ -11,7 +11,7 @@
   "electronVersion": "1.4.3",
   "main": "src/index.js",
   "scripts": {
-    "test": "standard",
+    "test": "xo",
     "build": "export NODE_ENV='production'; electron-packager . $npm_package_productName --out=dist --ignore='^/dist$' --prune --asar --all --version=$npm_package_electronVersion",
     "start": "NODE_ENV='dev' electron . & browser-sync start --server ui --files ui --no-open",
     "postinstall-broken-dont-use-for-now": "electron-rebuild -e=node_modules/electron",
