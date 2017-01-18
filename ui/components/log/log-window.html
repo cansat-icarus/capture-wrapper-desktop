@@ -5,74 +5,74 @@
 <link rel="import" href="../../lib/style.html">
 
 <dom-module id="cg-log-window">
-  <template>
-    <style>
-      :host {
-        display: block;
-      }
+	<template>
+		<style>
+			:host {
+				display: block;
+			}
 
-      #list, #list-container {
-        height: 100%;
-      }
+			#list, #list-container {
+				height: 100%;
+			}
 
-      #controls {
-        background: var(--light-primary-color);
-        opacity: 1;
-        padding-left: 1em;
-        display: flex;
-        justify-content: space-around;
-        align-items: center;
-        height: 42px;
-      }
+			#controls {
+				background: var(--light-primary-color);
+				opacity: 1;
+				padding-left: 1em;
+				display: flex;
+				justify-content: space-around;
+				align-items: center;
+				height: 42px;
+			}
 
-      .flex {
-        flex: 1;
-      }
-    </style>
-    <div id="controls">
-      <div>Last Seq: [[lastSeq]]</div>
-      <div class="flex"></div>
-      <paper-button on-tap="clearCurrentList">Clear</paper-button>
-      <paper-button on-tap="rebuildList">Reload Log</paper-button>
-    </div>
-    <div id="list-container">
-      <iron-list id="list" target="list-container" items="[[logItems]]">
-        <template>
-          <cg-log-item index="[[index]]" data="[[item]]" on-iron-resize="_onResize"></cg-log-item>
-        </template>
-      </iron-list>
-    </div>
-  </template>
-  <script>
-    Polymer({
-      is: 'cg-log-window',
-      properties: {
-        logItems: {
-          type: Array,
-          value: () => []
-        },
-        lastSeq: Number
-      },
-      ready() {
-        this.rebuildList()
-        CGBridge.on('logdoc', (doc, seq) => {
-          this.lastSeq = seq
-          this.unshift('logItems', doc)
-        })
-      },
-      rebuildList() {
-        CGBridge.emit('logwrebuild', 0)
-        this.clearCurrentList()
-      },
-      clearCurrentList() {
-        this.logItems = []
-      },
-      _onResize(event) {
-        try {
-          this.$.list.updateSizeForItem(event.target.index)
-        } catch(e) {}
-        this.$.list.updateViewportBoundaries()
-      }
-    })
-  </script>
+			.flex {
+				flex: 1;
+			}
+		</style>
+		<div id="controls">
+			<div>Last Seq: [[lastSeq]]</div>
+			<div class="flex"></div>
+			<paper-button on-tap="clearCurrentList">Clear</paper-button>
+			<paper-button on-tap="rebuildList">Reload Log</paper-button>
+		</div>
+		<div id="list-container">
+			<iron-list id="list" target="list-container" items="[[logItems]]">
+				<template>
+					<cg-log-item index="[[index]]" data="[[item]]" on-iron-resize="_onResize"></cg-log-item>
+				</template>
+			</iron-list>
+		</div>
+	</template>
+	<script>
+		Polymer({
+			is: 'cg-log-window',
+			properties: {
+				logItems: {
+					type: Array,
+					value: () => []
+				},
+				lastSeq: Number
+			},
+			ready() {
+				this.rebuildList()
+				CGBridge.on('logdoc', (doc, seq) => {
+					this.lastSeq = seq
+					this.unshift('logItems', doc)
+				})
+			},
+			rebuildList() {
+				CGBridge.emit('logwrebuild', 0)
+				this.clearCurrentList()
+			},
+			clearCurrentList() {
+				this.logItems = []
+			},
+			_onResize(event) {
+				try {
+					this.$.list.updateSizeForItem(event.target.index)
+				} catch (err) {}
+				this.$.list.updateViewportBoundaries()
+			}
+		})
+	</script>
 </dom-module>

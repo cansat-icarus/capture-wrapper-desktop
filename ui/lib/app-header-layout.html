@@ -23,14 +23,14 @@ Using the document scroll:
 
 ```html
 <app-header-layout>
-  <app-header fixed condenses effects="waterfall">
-    <app-toolbar>
-      <div main-title>App name</div>
-    </app-toolbar>
-  </app-header>
-  <div>
-    main content
-  </div>
+	<app-header fixed condenses effects="waterfall">
+		<app-toolbar>
+			<div main-title>App name</div>
+		</app-toolbar>
+	</app-header>
+	<div>
+		main content
+	</div>
 </app-header-layout>
 ```
 
@@ -38,14 +38,14 @@ Using an own scrolling region:
 
 ```html
 <app-header-layout has-scrolling-region style="width: 300px; height: 400px;">
-  <app-header fixed condenses effects="waterfall">
-    <app-toolbar>
-      <div main-title>App name</div>
-    </app-toolbar>
-  </app-header>
-  <div>
-    main content
-  </div>
+	<app-header fixed condenses effects="waterfall">
+		<app-toolbar>
+			<div main-title>App name</div>
+		</app-toolbar>
+	</app-header>
+	<div>
+		main content
+	</div>
 </app-header-layout>
 ```
 
@@ -66,183 +66,186 @@ Add the `fullbleed` attribute to app-header-layout to make it fit the size of it
 -->
 
 <dom-module id="cg-app-header-layout">
-  <template>
-    <style>
-      :host {
-        display: block;
-        /**
-         * Force app-header-layout to have its own stacking context so that its parent can
-         * control the stacking of it relative to other elements (e.g. app-drawer-layout).
-         * This could be done using `isolation: isolate`, but that's not well supported
-         * across browsers.
-         */
-        position: relative;
-        z-index: 0;
-      }
+	<template>
+		<style>
+			:host {
+				display: block;
+				/**
+				 * Force app-header-layout to have its own stacking context so that its parent can
+				 * control the stacking of it relative to other elements (e.g. app-drawer-layout).
+				 * This could be done using `isolation: isolate`, but that's not well supported
+				 * across browsers.
+				 */
+				position: relative;
+				z-index: 0;
+			}
 
-      :host > ::content > app-header {
-        @apply(--layout-fixed-top);
-        z-index: 1;
-      }
+			:host > ::content > app-header {
+				@apply(--layout-fixed-top);
+				z-index: 1;
+			}
 
-      :host([has-scrolling-region]) {
-        height: 100%;
-      }
+			:host([has-scrolling-region]) {
+				height: 100%;
+			}
 
-      :host([has-scrolling-region]) > ::content > app-header {
-        position: absolute;
-      }
+			:host([has-scrolling-region]) > ::content > app-header {
+				position: absolute;
+			}
 
-      :host([has-scrolling-region]) > #contentContainer {
-        @apply(--layout-fit);
-        overflow-y: auto;
-        -webkit-overflow-scrolling: touch;
-      }
+			:host([has-scrolling-region]) > #contentContainer {
+				@apply(--layout-fit);
+				overflow-y: auto;
+				-webkit-overflow-scrolling: touch;
+			}
 
-      :host([fullbleed]) {
-        @apply(--layout-vertical);
-        @apply(--layout-fit);
-      }
+			:host([fullbleed]) {
+				@apply(--layout-vertical);
+				@apply(--layout-fit);
+			}
 
-      :host([fullbleed]) > #contentContainer {
-        @apply(--layout-vertical);
-        @apply(--layout-flex);
-      }
+			:host([fullbleed]) > #contentContainer {
+				@apply(--layout-vertical);
+				@apply(--layout-flex);
+			}
 
-      #contentContainer {
-        /* Create a stacking context here so that all children appear below the header. */
-        position: relative;
-        z-index: 0;
-      }
+			#contentContainer {
+				/* Create a stacking context here so that all children appear below the header. */
+				position: relative;
+				z-index: 0;
+			}
 
-      cg-station-score-big {
-        position: absolute;
-        right: 20px;
-        top: 180px;
-        will-change: transform;
-        transition: 0.2s transform;
-        z-index: 10;
-      }
+			cg-station-score-big {
+				position: absolute;
+				right: 20px;
+				top: 180px;
+				will-change: transform;
+				transition: 0.2s transform;
+				z-index: 10;
+			}
 
-      cg-station-score-big.shrink-to-0 {
-        transform: scale3d(0, 0, 0);
-      }
+			cg-station-score-big.shrink-to-0 {
+				transform: scale3d(0, 0, 0);
+			}
 
-    </style>
+		</style>
 
-    <content id="header" select="app-header"></content>
-    <cg-station-score-big id="stationScore"></cg-station-score-big>
+		<content id="header" select="app-header"></content>
+		<cg-station-score-big id="stationScore"></cg-station-score-big>
 
-    <div id="contentContainer">
-      <content></content>
-    </div>
+		<div id="contentContainer">
+			<content></content>
+		</div>
 
-  </template>
+	</template>
 
-  <script>
-    Polymer({
-      is: 'cg-app-header-layout',
+	<script>
+		// Not my code so...
+		// eslint-disable
+		Polymer({
+			is: 'cg-app-header-layout',
 
-      behaviors: [
-        Polymer.IronResizableBehavior
-      ],
+			behaviors: [
+				Polymer.IronResizableBehavior
+			],
 
-      properties: {
-        /**
-         * If true, the current element will have its own scrolling region.
-         * Otherwise, it will use the document scroll to control the header.
-         */
-        hasScrollingRegion: {
-          type: Boolean,
-          value: false,
-          reflectToAttribute: true
-        }
-      },
+			properties: {
+				/**
+				 * If true, the current element will have its own scrolling region.
+				 * Otherwise, it will use the document scroll to control the header.
+				 */
+				hasScrollingRegion: {
+					type: Boolean,
+					value: false,
+					reflectToAttribute: true
+				}
+			},
 
-      listeners: {
-        'iron-resize': '_resizeHandler',
-        'app-header-reset-layout': 'resetLayout'
-      },
+			listeners: {
+				'iron-resize': '_resizeHandler',
+				'app-header-reset-layout': 'resetLayout'
+			},
 
-      observers: [
-        'resetLayout(isAttached, hasScrollingRegion)'
-      ],
+			observers: [
+				'resetLayout(isAttached, hasScrollingRegion)'
+			],
 
-      /**
-       * A reference to the app-header element.
-       *
-       * @property header
-       */
-      get header() {
-        return Polymer.dom(this.$.header).getDistributedNodes()[0];
-      },
+			/**
+			 * A reference to the app-header element.
+			 *
+			 * @property header
+			 */
+			get header() {
+				return Polymer.dom(this.$.header).getDistributedNodes()[0];
+			},
 
-      // Patch: hide big station score when header disappears
-      ready () {
-        window.addEventListener('scroll', () => {
-          setImmediate(() => {
-            this.$.stationScore.classList.toggle('shrink-to-0', this.header.getScrollState().progress > 0.5)
-          })
-        })
-      },
+			// Patch: hide big station score when header disappears
+			ready () {
+				window.addEventListener('scroll', () => {
+					setImmediate(() => {
+						this.$.stationScore.classList.toggle('shrink-to-0', this.header.getScrollState().progress > 0.5)
+					})
+				})
+			},
 
-      /**
-       * Resets the layout. This method is automatically called when the element is attached
-       * to the DOM.
-       *
-       * @method resetLayout
-       */
-      resetLayout: function() {
-        this._updateScroller();
-        this.debounce('_resetLayout', this._updateContentPosition);
-      },
+			/**
+			 * Resets the layout. This method is automatically called when the element is attached
+			 * to the DOM.
+			 *
+			 * @method resetLayout
+			 */
+			resetLayout: function() {
+				this._updateScroller();
+				this.debounce('_resetLayout', this._updateContentPosition);
+			},
 
-      _updateContentPosition: function() {
-        var header = this.header;
-        if (!this.isAttached || !header) {
-          return;
-        }
-        // Get header height here so that style reads are batched together before style writes
-        // (i.e. getBoundingClientRect() below).
-        var headerHeight = header.offsetHeight;
-        // Update the header position.
-        if (!this.hasScrollingRegion) {
-          var rect = this.getBoundingClientRect();
-          var rightOffset = document.documentElement.clientWidth - rect.right;
-          header.style.left = rect.left + 'px';
-          header.style.right = rightOffset + 'px';
-        } else {
-          header.style.left = '';
-          header.style.right = '';
-        }
-        // Update the content container position.
-        var containerStyle = this.$.contentContainer.style;
-        if (header.fixed && !header.willCondense() && this.hasScrollingRegion) {
-          // If the header size does not change and we're using a scrolling region, exclude
-          // the header area from the scrolling region so that the header doesn't overlap
-          // the scrollbar.
-          containerStyle.marginTop = headerHeight + 'px';
-          containerStyle.paddingTop = '';
-        } else {
-          containerStyle.paddingTop = headerHeight + 'px';
-          containerStyle.marginTop = '';
-        }
-      },
+			_updateContentPosition: function() {
+				var header = this.header;
+				if (!this.isAttached || !header) {
+					return;
+				}
+				// Get header height here so that style reads are batched together before style writes
+				// (i.e. getBoundingClientRect() below).
+				var headerHeight = header.offsetHeight;
+				// Update the header position.
+				if (!this.hasScrollingRegion) {
+					var rect = this.getBoundingClientRect();
+					var rightOffset = document.documentElement.clientWidth - rect.right;
+					header.style.left = rect.left + 'px';
+					header.style.right = rightOffset + 'px';
+				} else {
+					header.style.left = '';
+					header.style.right = '';
+				}
+				// Update the content container position.
+				var containerStyle = this.$.contentContainer.style;
+				if (header.fixed && !header.willCondense() && this.hasScrollingRegion) {
+					// If the header size does not change and we're using a scrolling region, exclude
+					// the header area from the scrolling region so that the header doesn't overlap
+					// the scrollbar.
+					containerStyle.marginTop = headerHeight + 'px';
+					containerStyle.paddingTop = '';
+				} else {
+					containerStyle.paddingTop = headerHeight + 'px';
+					containerStyle.marginTop = '';
+				}
+			},
 
-      _updateScroller: function() {
-        if (!this.isAttached) {
-          return;
-        }
-        var header = this.header;
-        if (header) {
-          header.scrollTarget = this.hasScrollingRegion ?
-              this.$.contentContainer : this.ownerDocument.documentElement;
-        }
-      },
+			_updateScroller: function() {
+				if (!this.isAttached) {
+					return;
+				}
+				var header = this.header;
+				if (header) {
+					header.scrollTarget = this.hasScrollingRegion ?
+							this.$.contentContainer : this.ownerDocument.documentElement;
+				}
+			},
 
-      _resizeHandler: function() {
-        this.resetLayout();
-      }
-    });
-  </script>
+			_resizeHandler: function() {
+				this.resetLayout();
+			}
+		});
+		// eslint-enable
+	</script>
 </dom-module>

@@ -15,157 +15,161 @@
 <link rel="import" href="packet-field.html">
 
 <dom-module id="cg-packet">
-  <template>
-    <style include="iron-flex">
-      :host {
-        display: block;
-      }
+	<template>
+		<style include="iron-flex">
+			:host {
+				display: block;
+			}
 
-      #header {
-        flex-wrap: nowrap;
-        padding-left: 1em;
-      }
+			#header {
+				flex-wrap: nowrap;
+				padding-left: 1em;
+			}
 
-      .type {
-        width: 95px;
-      }
+			.type {
+				width: 95px;
+			}
 
-      .received-time, .received-datetime {
-        width: 175px;
-      }
+			.received-time, .received-datetime {
+				width: 175px;
+			}
 
-      .received-datetime {
-        --paper-input-container-input: {
-          font-size: 10px;
-        }
-      }
+			.received-datetime {
+				--paper-input-container-input: {
+					font-size: 10px;
+				}
+			}
 
-      .msgid, .modid {
-        width: 40px;
-        --paper-input-container-input: {
-          text-align: center;
-        }
-      }
+			.msgid, .modid {
+				width: 40px;
+				--paper-input-container-input: {
+					text-align: center;
+				}
+			}
 
-      .msg, .mod {
-        flex: 100;
-      }
+			.msg, .mod {
+				flex: 100;
+			}
 
-      juicy-jsoneditor {
-        transition: height 0.5s ease;
-      }
-    </style>
-    <paper-material elevation="2">
-      <div id="header" class="layout horizontal center-center">
-        <cg-packet-field class="type" label="Type" value="[[_typeLabel]]" no-ignore></cg-packet-field>
-        <cg-packet-field class="received-time" label="Received At" value="[[_receiveTime]]"></cg-packet-field>
-        <cg-packet-field class="received-datetime" label="Received At" value="[[_receiveDateTime]]"></cg-packet-field>
-        <cg-packet-field class="msgid" label="MID" value="[[packet.message.id]]"></cg-packet-field>
-        <cg-packet-field class="modid" label="MID" value="[[packet.module.id]]"></cg-packet-field>
-        <cg-packet-field class="msg" label="Message" value="[[packet.message.text]]"></cg-packet-field>
-        <cg-packet-field class="mod" label="Module" value="[[packet.module.name]]"></cg-packet-field>
-        <div class="flex"></div>
-        <cg-score score="[[packet.score]]"></cg-score>
-      </div>
-      <iron-collapse id="collapse">
-        <juicy-jsoneditor id="editor" mode="view" name="Packet" json="[[packet]]" on-tap="_handleEditorTap"></juicy-jsoneditor>
-      </iron-collapse>
-    </paper-material>
-  </template>
-  <script>
-    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || Intl.DateTimeFormat().resolved.timeZone
+			juicy-jsoneditor {
+				transition: height 0.5s ease;
+			}
+		</style>
+		<paper-material elevation="2">
+			<div id="header" class="layout horizontal center-center">
+				<cg-packet-field class="type" label="Type" value="[[_typeLabel]]" no-ignore></cg-packet-field>
+				<cg-packet-field class="received-time" label="Received At" value="[[_receiveTime]]"></cg-packet-field>
+				<cg-packet-field class="received-datetime" label="Received At" value="[[_receiveDateTime]]"></cg-packet-field>
+				<cg-packet-field class="msgid" label="MID" value="[[packet.message.id]]"></cg-packet-field>
+				<cg-packet-field class="modid" label="MID" value="[[packet.module.id]]"></cg-packet-field>
+				<cg-packet-field class="msg" label="Message" value="[[packet.message.text]]"></cg-packet-field>
+				<cg-packet-field class="mod" label="Module" value="[[packet.module.name]]"></cg-packet-field>
+				<div class="flex"></div>
+				<cg-score score="[[packet.score]]"></cg-score>
+			</div>
+			<iron-collapse id="collapse">
+				<juicy-jsoneditor id="editor" mode="view" name="Packet" json="[[packet]]" on-tap="_handleEditorTap"></juicy-jsoneditor>
+			</iron-collapse>
+		</paper-material>
+	</template>
+	<script>
+		const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || Intl.DateTimeFormat().resolved.timeZone
 
-    window.CGPacket = Polymer({
-      is: 'cg-packet',
-      behaviors: [
-        Polymer.NeonAnimatableBehavior,
-        Polymer.IronA11yKeysBehavior
-      ],
-      listeners: {
-        tap: '_onTap'
-      },
-      keyBindings: {
-        enter: '_onTap'
-      },
-      hostAttributes: {
-        tabindex: '0'
-      },
-      properties: {
-        packet: Object,
-        _typeLabel: {
-          type: String,
-          computed: '_computeTypeLabel(packet.type)'
-        },
-        _receiveTime: {
-          type: String,
-          computed: '_computeReceiveTime(packet.receivedAt)'
-        },
-        _receiveDateTime: {
-          type: String,
-          computed: '_computeReceiveDateTime(packet.receivedAt)'
-        },
-        animationConfig: {
-          type: Object,
-          value: () => ({
-            entry: [
-              {
-                name: 'slide-from-top-animation',
-                node: this
-              },
-              {
-                name: 'fade-in-animation',
-                node: this
-              }
-            ],
-            exit: [
-              {
-                name: 'slide-down-animation',
-                node: this
-              },
-              {
-                name: 'fade-out-animation',
-                node: this
-              }
-            ]
-          })
-        }
-      },
-      typeLabelMap: {
-        t: 'Telemetry',
-        i: 'Information',
-        s: 'Settings'
-      },
-      attached() {
-        for(const el of this.querySelectorAll('cg-packet-field'))
-          el.forceUpdateDisplay()
-      },
-      _computeTypeLabel(type) {
-        return this.typeLabelMap[type]
-      },
-      _computeReceiveDateTime(receivedAt) {
-        const now = moment().utc()
-        const received = moment(receivedAt).utc()
+		window.CGPacket = Polymer({
+			is: 'cg-packet',
+			behaviors: [
+				Polymer.NeonAnimatableBehavior,
+				Polymer.IronA11yKeysBehavior
+			],
+			listeners: {
+				tap: '_onTap'
+			},
+			keyBindings: {
+				enter: '_onTap'
+			},
+			hostAttributes: {
+				tabindex: '0'
+			},
+			properties: {
+				packet: Object,
+				_typeLabel: {
+					type: String,
+					computed: '_computeTypeLabel(packet.type)'
+				},
+				_receiveTime: {
+					type: String,
+					computed: '_computeReceiveTime(packet.receivedAt)'
+				},
+				_receiveDateTime: {
+					type: String,
+					computed: '_computeReceiveDateTime(packet.receivedAt)'
+				},
+				animationConfig: {
+					type: Object,
+					value: () => ({
+						entry: [
+							{
+								name: 'slide-from-top-animation',
+								node: this
+							},
+							{
+								name: 'fade-in-animation',
+								node: this
+							}
+						],
+						exit: [
+							{
+								name: 'slide-down-animation',
+								node: this
+							},
+							{
+								name: 'fade-out-animation',
+								node: this
+							}
+						]
+					})
+				}
+			},
+			typeLabelMap: {
+				t: 'Telemetry',
+				i: 'Information',
+				s: 'Settings'
+			},
+			attached() {
+				for (const el of this.querySelectorAll('cg-packet-field')) {
+					el.forceUpdateDisplay()
+				}
+			},
+			_computeTypeLabel(type) {
+				return this.typeLabelMap[type]
+			},
+			_computeReceiveDateTime(receivedAt) {
+				const now = moment().utc()
+				const received = moment(receivedAt).utc()
 
-        if(now.day() === received.day() && now.diff(received, 'days') <= 1)
-          return ''
+				if (now.day() === received.day() && now.diff(received, 'days') <= 1) {
+					return ''
+				}
 
-        return received.tz(timezone).format('YYYY-MM-DD HH:mm:ss [UTC]Z')
-      },
-      _computeReceiveTime(receivedAt) {
-        const now = moment().utc()
-        const received = moment(receivedAt).utc()
+				return received.tz(timezone).format('YYYY-MM-DD HH:mm:ss [UTC]Z')
+			},
+			_computeReceiveTime(receivedAt) {
+				const now = moment().utc()
+				const received = moment(receivedAt).utc()
 
-        if(now.day() !== received.day() || now.diff(received, 'days') > 1) return ''
+				if (now.day() !== received.day() || now.diff(received, 'days') > 1) {
+					return ''
+				}
 
-        return received.tz(timezone).format('HH:mm:ss [UTC]Z')
-      },
-      _onTap() {
-        // Open/close the collapse
-        this.$.collapse.toggle()
-      },
-      _handleEditorTap(event) {
-        event.stopPropagation()
-      }
-    })
-  </script>
+				return received.tz(timezone).format('HH:mm:ss [UTC]Z')
+			},
+			_onTap() {
+				// Open/close the collapse
+				this.$.collapse.toggle()
+			},
+			_handleEditorTap(event) {
+				event.stopPropagation()
+			}
+		})
+	</script>
 </dom-module>

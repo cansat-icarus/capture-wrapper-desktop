@@ -1,17 +1,19 @@
-const { bridge } = require('../main-window')
+const {bridge} = require('../main-window')
 const station = require('../station')()
 
 bridge.on('serial:availablePorts', () => {
-  station.getAvailablePorts()
-    .then(autocompletion => bridge.emit('serial:availablePorts', autocompletion))
+	station.getAvailablePorts()
+		.then(autocompletion => bridge.emit('serial:availablePorts', autocompletion))
 })
 
 bridge.on('serial:path', path => {
-  // Set path
-  if(path) return station.serial.setPath(path)
+	// Set path
+	if (path) {
+		return station.serial.setPath(path)
+	}
 
-  // Get path
-  bridge.emit('serial:path', station.serial._path)
+	// Get path
+	bridge.emit('serial:path', station.serial._path)
 })
 
 bridge.on('serial:status', () => bridge.emit('serial:status', station.serial._state))

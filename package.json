@@ -18,9 +18,8 @@
     "postinstall": "IOJS_ORG_MIRROR=https://atom.io/download/atom-shell npm rebuild --runtime=electron --target=1.4.0 --arch=x64 --build-from-source"
   },
   "dependencies": {
-    "bunyan": "^1.8.1",
+    "camelcase": "^4.0.0",
     "capture-lib": "file:../capture-lib",
-    "pouchdb": "^6.0.7",
     "rimraf": "^2.5.4"
   },
   "devDependencies": {
@@ -36,25 +35,20 @@
   "xo": {
     "esnext": true,
     "semicolon": false,
-    "space": 2,
+    "extensions": [
+      "html",
+      "json"
+    ],
     "plugins": [
-      "ava",
-      "html"
+      "html",
+      "json"
     ],
     "ignores": [
       "docs/**",
       "ui/lib/app-header-layout.html"
     ],
     "rules": {
-      "babel/object-curly-spacing": [
-        "error",
-        "always"
-      ],
-      "babel/array-bracket-spacing": [
-        "error",
-        "always"
-      ],
-      "babel/new-cap": [
+      "new-cap": [
         "error",
         {
           "capIsNewExceptions": [
@@ -63,53 +57,14 @@
           ]
         }
       ],
-      "curly": [
-        "error",
-        "multi-or-nest",
-        "consistent"
-      ],
-      "camelcase": [
-        "error",
-        {
-          "properties": "never"
-        }
-      ],
-      "keyword-spacing": [
-        "error",
-        {
-          "overrides": {
-            "catch": {
-              "after": false
-            },
-            "for": {
-              "after": false
-            },
-            "if": {
-              "after": false
-            },
-            "switch": {
-              "after": false
-            },
-            "while": {
-              "after": false
-            }
-          }
-        }
-      ],
-      "no-constant-condition": [
-        "error",
-        {
-          "checkLoops": false
-        }
-      ],
-      "no-warning-comments": 0,
-      "no-implicit-coercion": 0,
-      "no-return-assign": 0,
-      "ava/test-ended": 0,
-      "import/no-named-as-default": 0,
-      "import/order": 0
+      "no-return-assign": "off",
+      "no-implicit-coercion": "off"
     },
     "overrides": [
+      {
+        "files": "{bower,package}.json",
+        "spaces": 2
+      },
       {
         "files": "**/*.html",
         "envs": [

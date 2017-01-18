@@ -10,124 +10,128 @@
 <link rel="import" href="../../lib/style.html">
 
 <dom-module id="cg-dialog-name">
-  <template>
-    <style>
-      :host {
-        display: block;
-      }
+	<template>
+		<style>
+			:host {
+				display: block;
+			}
 
-      paper-input {
-        --paper-input-container-color: var(--secondary-text-color);
-        --paper-input-container-focus-color: var(--default-primary-color);
-        --paper-input-container-input-color: var(--primary-text-color);
-      }
+			paper-input {
+				--paper-input-container-color: var(--secondary-text-color);
+				--paper-input-container-focus-color: var(--default-primary-color);
+				--paper-input-container-input-color: var(--primary-text-color);
+			}
 
-      app-header {
-        background-color: var(--default-primary-color);
-        color: var(--text-primary-color);
-        -webkit-app-region: drag;
-        -webkit-user-select: none;
-      }
+			app-header {
+				background-color: var(--default-primary-color);
+				color: var(--text-primary-color);
+				-webkit-app-region: drag;
+				-webkit-user-select: none;
+			}
 
-      .content {
-        padding: 0 1em;
-      }
+			.content {
+				padding: 0 1em;
+			}
 
-      .main {
-        margin-top: 0;
-        @apply(--layout-vertical);
-      }
+			.main {
+				margin-top: 0;
+				@apply(--layout-vertical);
+			}
 
-      .buttons {
-        margin-top: 1em;
-        @apply(--layout-horizontal);
-        align-items: center;
-      }
-    </style>
-    <app-header fixed>
-      <app-toolbar>
-        <div main-title>Set station name</div>
-      </app-toolbar>
-    </app-header>
-    <div class="content">
-      <div class="main">
-        <p>Please set the station name according to protocol.</p>
-        <p>The first field may contain the previous station name, confirm it as stated in the Station Operation Protocol.</p>
-        <p><strong>This cannot be changed without restarting the app.</strong></p>
+			.buttons {
+				margin-top: 1em;
+				@apply(--layout-horizontal);
+				align-items: center;
+			}
+		</style>
+		<app-header fixed>
+			<app-toolbar>
+				<div main-title>Set station name</div>
+			</app-toolbar>
+		</app-header>
+		<div class="content">
+			<div class="main">
+				<p>Please set the station name according to protocol.</p>
+				<p>The first field may contain the previous station name, confirm it as stated in the Station Operation Protocol.</p>
+				<p><strong>This cannot be changed without restarting the app.</strong></p>
 
-        <custom-validator id="validatorName" validator-name="validateName"></custom-validator>
-        <paper-input id="name" autofocus auto-validate validator="validateName" invalid="{{nameInvalid}}" label="Station Name" value="{{name}}"></paper-input>
+				<custom-validator id="validatorName" validator-name="validateName"></custom-validator>
+				<paper-input id="name" autofocus auto-validate validator="validateName" invalid="{{nameInvalid}}" label="Station Name" value="{{name}}"></paper-input>
 
-        <custom-validator id="validatorNameConfirm" validator-name="validateNameConfirm"></custom-validator>
-        <paper-input id="nameConfirm" auto-validate validator="validateNameConfirm" invalid="{{nameConfirmInvalid}}" label="Confirm Station Name" value="{{nameConfirm}}" on-keypress="_autoSubmitOnEnter"></paper-input>
-      </div>
-      <div class="buttons">
-        <paper-spinner active="{{spinnerActive}}"></paper-spinner>
-        <paper-button on-click="_exit" >Exit Station Software</paper-button>
-        <paper-button id="continueBtn" raised disabled="{{continueBtnDisable}}" on-click="_continue">
-          Continue
-        </paper-button>
-      </div>
-    </div>
-  </template>
-  <script>
-    Polymer({
-      is: 'cg-dialog-name',
-      properties: {
-        name: String,
-        nameConfirm: String,
-        nameInvalid: Boolean,
-        nameConfirmInvalid: Boolean,
-        continueBtnDisable: {
-          type: Boolean,
-          computed: '_computeContinueBtnDisable(nameInvalid, nameConfirmInvalid)'
-        },
-        spinnerActive: {
-          type: Boolean,
-          value: false
-        }
-      },
-      ready() {
-        // Setup validators
-        this.$.validatorName.validate = this._validateName.bind(this)
-        this.$.validatorNameConfirm.validate = this._validateNameConfirm.bind(this)
+				<custom-validator id="validatorNameConfirm" validator-name="validateNameConfirm"></custom-validator>
+				<paper-input id="nameConfirm" auto-validate validator="validateNameConfirm" invalid="{{nameConfirmInvalid}}" label="Confirm Station Name" value="{{nameConfirm}}" on-keypress="_autoSubmitOnEnter"></paper-input>
+			</div>
+			<div class="buttons">
+				<paper-spinner active="{{spinnerActive}}"></paper-spinner>
+				<paper-button on-click="_exit" >Exit Station Software</paper-button>
+				<paper-button id="continueBtn" raised disabled="{{continueBtnDisable}}" on-click="_continue">
+					Continue
+				</paper-button>
+			</div>
+		</div>
+	</template>
+	<script>
+		Polymer({
+			is: 'cg-dialog-name',
+			properties: {
+				name: String,
+				nameConfirm: String,
+				nameInvalid: Boolean,
+				nameConfirmInvalid: Boolean,
+				continueBtnDisable: {
+					type: Boolean,
+					computed: '_computeContinueBtnDisable(nameInvalid, nameConfirmInvalid)'
+				},
+				spinnerActive: {
+					type: Boolean,
+					value: false
+				}
+			},
+			ready() {
+				// Setup validators
+				this.$.validatorName.validate = this._validateName.bind(this)
+				this.$.validatorNameConfirm.validate = this._validateNameConfirm.bind(this)
 
-        // If we have an existing name, fill it in and ask for confirmation
-        this.name = localStorage.oldName || this.name
-      },
-      _validateName(value) {
-        return !!value
-      },
-      _validateNameConfirm(value) {
-        return !!value && (value === this.name)
-      },
-      _computeContinueBtnDisable(nameInvalid, nameConfirmInvalid) {
-        // The button is not disabled by default with just validations...
-        return !(nameInvalid === false && nameConfirmInvalid === false && this.name)
-      },
-      _exit() {
-        CGBridge.emit('exit')
-      },
-      _continue() {
-        // Make sure we're good!
-        if(!this.$.name.validate() || !this.$.nameConfirm.validate()) return
+				// If we have an existing name, fill it in and ask for confirmation
+				this.name = localStorage.oldName || this.name
+			},
+			_validateName(value) {
+				return !!value
+			},
+			_validateNameConfirm(value) {
+				return !!value && (value === this.name)
+			},
+			_computeContinueBtnDisable(nameInvalid, nameConfirmInvalid) {
+				// The button is not disabled by default with just validations...
+				return !(nameInvalid === false && nameConfirmInvalid === false && this.name)
+			},
+			_exit() {
+				CGBridge.emit('exit')
+			},
+			_continue() {
+				// Make sure we're good!
+				if (!this.$.name.validate() || !this.$.nameConfirm.validate()) {
+					return
+				}
 
-        // Save name for easier startup
-        localStorage.oldName = this.name
+				// Save name for easier startup
+				localStorage.oldName = this.name
 
-        // Show the spinner
-        this.spinnerActive = true
+				// Show the spinner
+				this.spinnerActive = true
 
-        this.$.name.disable = true
-        this.$.nameConfirm.disable = true
-        this.$.continueBtn.disable = true
+				this.$.name.disable = true
+				this.$.nameConfirm.disable = true
+				this.$.continueBtn.disable = true
 
-        // Send the name over!
-        CGBridge.emit(this.name, this.nameConfirm)
-      },
-      _autoSubmitOnEnter(e) {
-        if(e.charCode === 13) this._continue()
-      }
-    })
-  </script>
+				// Send the name over!
+				CGBridge.emit(this.name, this.nameConfirm)
+			},
+			_autoSubmitOnEnter(e) {
+				if (e.charCode === 13) {
+					this._continue()
+				}
+			}
+		})
+	</script>
 </dom-module>
