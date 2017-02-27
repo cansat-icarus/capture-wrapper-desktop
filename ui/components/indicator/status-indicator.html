@@ -55,9 +55,20 @@
 				},
 				tooltip: String
 			},
-			observers: ['_colorChanged(color)'],
+			observers: ['_colorChanged(color)', '_tooltipChanged(tooltip)'],
+			ready() {
+				// _tooltipChanged will not get called the first time... when the tooltip is unset and it is most needed
+				this._tooltipChanged(this.tooltip)
+			},
 			_colorChanged(color) {
 				this.$.indicatorIcon.style.backgroundColor = color
+			},
+			_tooltipChanged(tooltip) {
+				if (tooltip === '') {
+					this.$.indicatorTooltip.style.display = 'none'
+				} else {
+					this.$.indicatorTooltip.style.display = 'unset'
+				}
 			}
 		})
 	</script>
