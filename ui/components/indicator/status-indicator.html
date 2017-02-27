@@ -8,7 +8,7 @@
 				display: inline-block;
 				margin-left: 0.1em;
 			}
-			#indicator-text {
+			#indicatorText {
 				font-size: medium;
 				padding-left: 0.5em;
 			}
@@ -22,7 +22,7 @@
 				position: relative;
 				display: inline-block;
 			}
-			#indicator-tooltip {
+			#indicatorTooltip {
 				visibility: hidden;
 				background-color: #000;
 				color: #fff;
@@ -33,16 +33,16 @@
 				border-radius: 0.8em;
 				opacity: 0.75;
 			}
-			#indicator:hover #indicator-tooltip {
+			#indicator:hover #indicatorTooltip {
 				visibility: visible;
 			}
 		</style>
 		<div id="indicator">
 			<div class="layout horizontal center-center">
 				<div id="indicatorIcon"></div>
-				<div id="indicator-text"><content></content></div>
+				<div id="indicatorText"><content></content></div>
 			</div>
-			<div id="indicator-tooltip">[[tooltip]]</div>
+			<div id="indicatorTooltip">[[tooltip]]</div>
 		</div>
 	</template>
 	<script>

@@ -11,7 +11,7 @@
 				display: block;
 			}
 
-			#list, #list-container {
+			#list, #listContainer {
 				height: 100%;
 			}
 
@@ -35,8 +35,8 @@
 			<paper-button on-tap="clearCurrentList">Clear</paper-button>
 			<paper-button on-tap="rebuildList">Reload Log</paper-button>
 		</div>
-		<div id="list-container">
-			<iron-list id="list" target="list-container" items="[[logItems]]">
+		<div id="listContainer">
+			<iron-list id="list" target="listContainer" items="[[logItems]]">
 				<template>
 					<cg-log-item index="[[index]]" data="[[item]]" on-iron-resize="_onResize"></cg-log-item>
 				</template>
