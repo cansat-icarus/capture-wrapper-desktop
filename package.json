@@ -1,14 +1,15 @@
 {
   "name": "capture-wrapper-desktop",
+  "private": true,
   "productName": "IcarusCanSatGroundStationDesktop",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Ground station software for the Icarus CanSat (Desktop version)",
   "license": "MIT",
   "author": {
     "name": "André Breda",
     "email": "addobandre99@gmail.com"
   },
-  "electronVersion": "1.4.14",
+  "electronVersion": "1.4.15",
   "main": "src/index.js",
   "scripts": {
     "test": "xo",
@@ -19,15 +20,15 @@
   "dependencies": {
     "camelcase": "^4.0.0",
     "capture-lib": "file:../capture-lib",
-    "rimraf": "^2.5.4"
+    "rimraf": "^2.6.1"
   },
   "devDependencies": {
-    "browser-sync": "^2.18.6",
+    "browser-sync": "^2.18.8",
     "devtron": "^1.4.0",
-    "electron": "^1.4.14",
-    "electron-packager": "^8.5.0",
-    "electron-rebuild": "^1.5.6",
-    "eslint-plugin-html": "^1.5.3",
+    "electron": "^1.4.15",
+    "electron-packager": "^8.5.2",
+    "electron-rebuild": "^1.5.7",
+    "eslint-plugin-html": "^2.0.1",
     "eslint-plugin-json": "^1.2.0",
     "xo": "^0.17.1"
   },
