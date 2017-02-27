@@ -16,16 +16,11 @@
 				display: block;
 			}
 
-			paper-input {
-				--paper-input-container-color: var(--secondary-text-color);
-				--paper-input-container-focus-color: var(--default-primary-color);
-				--paper-input-container-input-color: var(--primary-text-color);
-			}
-
 			app-header {
 				background-color: var(--default-primary-color);
 				color: var(--text-primary-color);
 				-webkit-app-region: drag;
+				user-select: none;
 				-webkit-user-select: none;
 			}
 
@@ -40,8 +35,9 @@
 
 			.buttons {
 				margin-top: 1em;
-				@apply(--layout-horizontal);
 				align-items: center;
+
+				@apply(--layout-horizontal);
 			}
 		</style>
 		<app-header fixed>
