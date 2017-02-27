@@ -1,6 +1,6 @@
 const {BrowserWindow, ipcMain} = require('electron')
 const EventBridge = require('./lib/bridge')
-const logDb = require('./station')().logDb
+const logDB = require('./station')().logDB
 
 const logWindow = new BrowserWindow({
 	minWidth: 10,
@@ -8,28 +8,30 @@ const logWindow = new BrowserWindow({
 	width: 750,
 	height: 550,
 	useContentSize: true,
-	show: false
+	show: false,
+	closable: false
 })
 const bridge = new EventBridge(ipcMain, logWindow)
 
 // Handle Log db rebuild
-let logDbListener
+let logDBListener
 
-function logDbChangeHandler({doc, seq}) {
+function logDBChangeHandler({doc, seq}) {
+	if (!bridge) return
 	bridge.emit('logdoc', doc, seq)
 }
 
 bridge.on('logwrebuild', (incrementalSeq = 0) => {
-	if (logDbListener) {
-		logDbListener.cancel()
+	if (logDBListener) {
+		logDBListener.cancel()
 	}
 
-	logDbListener = logDb.changes({
+	logDBListener = logDB.changes({
 		live: true,
 		include_docs: true, // eslint-disable-line camelcase
 		since: incrementalSeq
 	})
-		.on('change', logDbChangeHandler)
+		.on('change', logDBChangeHandler)
 })
 
 const urlBase = process.env.NODE_ENV === 'dev' && process.env.BROWSER_SYNC !== 'false' ? 'http://localhost:3000' : `file:${__dirname}/../ui`
