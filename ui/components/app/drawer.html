@@ -1,17 +1,44 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../lib/electron-ipc.html">
+<link rel="import" href="../../lib/style.html">
 
 <dom-module id="cg-drawer">
-  <template>
-    <style>
-      :host {
-        display: block;
-      }
-    </style>
-    IN DEVELOPMENT! WAIT!
-  </template>
-  <script>
-    Polymer({
-      is: 'cg-drawer'
-    })
-  </script>
+	<template>
+		<style is="custom-style" include="iron-flex">
+			:host {
+				display: flex;
+				flex-direction: column;
+				padding: 0 0.5em;
+			}
+
+			#logButton {
+				margin-bottom: 0.5em;
+			}
+		</style>
+		<!-- Title -->
+		<app-toolbar>Backend Connection</app-toolbar>
+
+		<div class="flex"></div>
+
+		<!-- Open Log Window -->
+		<paper-button id="logButton" raised on-tap="openLog">
+			<iron-icon icon="icons:open-in-new"></iron-icon>
+			&nbsp;Open Log
+		</paper-button>
+
+	</template>
+	<script>
+	(function () {
+		Polymer({
+			is: 'cg-drawer',
+			openLog() {
+				CGBridge.emit('protocol:run', 'log')
+			}
+		})
+	})()
+	</script>
 </dom-module>
