@@ -5,6 +5,7 @@
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../lib/electron-ipc.html">
+<link rel="import" href="../indicator/status-indicator.html">
 <link rel="import" href="../../lib/style.html">
 
 <dom-module id="cg-drawer">
@@ -29,6 +30,15 @@
 			#logButton {
 				margin-bottom: 0.5em;
 			}
+
+			.spacer {
+				height: 10px;
+			}
+
+			cg-status-indicator {
+				margin-top: 1em;
+				--cg-status-indicator-size: 0.6em;
+			}
 		</style>
 		<!-- Title -->
 		<app-toolbar>Backend Connection</app-toolbar>
@@ -36,6 +46,18 @@
 		<paper-input id="urlInput" disabled="[[connected]]" label="Backend URL" on-keypress="_enterToSubmitUrl"></paper-input>
 		<paper-button id="disconnectButton" disabled raised on-tap="disconnect" hidden="[[!connected]]">Disconnect</paper-button>
 		<paper-button id="connectButton" disabled raised on-tap="connect" hidden="[[connected]]">Connect</paper-button>
+
+		<div class="spacer"></div>
+
+		<cg-status-indicator color="[[_statusColor(socketStatus)]]" tooltip="[[_statusText(socketStatus)]]">
+			Backend Connection
+		</cg-status-indicator>
+		<cg-status-indicator color="[[_statusColor(dataReplStatus)]]" tooltip="[[_statusText(dataReplStatus)]]">
+			Data Replication
+		</cg-status-indicator>
+		<cg-status-indicator color="[[_statusColor(logReplStatus)]]" tooltip="[[_statusText(logReplStatus)]]">
+			Log Replication
+		</cg-status-indicator>
 
 		<div class="flex"></div>
 
@@ -48,15 +70,31 @@
 	</template>
 	<script>
 	(function () {
+		const STATUS_COLOR_MAP = {
+			connected: 'green',
+			disconnected: 'red'
+		}
+
+		const STATUS_TEXT_MAP = {
+			connected: 'Connected',
+			disconnected: 'Disconnected'
+		}
+
 		Polymer({
 			is: 'cg-drawer',
 			properties: {
 				backendUrl: String,
-				connected: Boolean
+				connected: Boolean,
+				socketStatus: String,
+				dataReplStatus: String,
+				logReplStatus: String
 			},
 			ready() {
 				// TODO: Grab current values
 				this.connected = false
+				this.socketStatus = 'disconnected'
+				this.dataReplStatus = 'disconnected'
+				this.logReplStatus = 'disconnected'
 
 				// TODO: only unlock controls when first batch of values is received
 				this.$.connectButton.disabled = false
@@ -67,11 +105,23 @@
 			},
 			connect() {
 				this.connected = true
+				this.socketStatus = 'connected'
+				this.dataReplStatus = 'connected'
+				this.logReplStatus = 'connected'
 				// TODO: implement
 			},
 			disconnect() {
 				this.connected = false
+				this.socketStatus = 'disconnected'
+				this.dataReplStatus = 'disconnected'
+				this.logReplStatus = 'disconnected'
 				// TODO: implement
+			},
+			_statusColor(status) {
+				return STATUS_COLOR_MAP[status] || 'black'
+			},
+			_statusText(status) {
+				return STATUS_TEXT_MAP[status] || 'Unknown status'
 			},
 			_enterToSubmitUrl(event) {
 				if (event.charCode === 13) {
