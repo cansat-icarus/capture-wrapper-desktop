@@ -43,7 +43,7 @@
 		<!-- Title -->
 		<app-toolbar>Backend Connection</app-toolbar>
 
-		<paper-input id="urlInput" disabled="[[connected]]" label="Backend URL" on-keypress="_enterToSubmitUrl"></paper-input>
+		<paper-input id="urlInput" disabled="[[connected]]" label="Backend URL" value="{{backendUrl}}" on-keypress="_enterToSubmitUrl"></paper-input>
 		<paper-button id="disconnectButton" disabled raised on-tap="disconnect" hidden="[[!connected]]">Disconnect</paper-button>
 		<paper-button id="connectButton" disabled raised on-tap="connect" hidden="[[connected]]">Connect</paper-button>
 
@@ -71,51 +71,77 @@
 	<script>
 	(function () {
 		const STATUS_COLOR_MAP = {
-			connected: 'green',
-			disconnected: 'red'
+			inactive: '#2196f3', // --paper-blue-500
+			cleanup: '#2196f3', // --paper-blue-500
+			disconnect: '#d32f2f', // --paper-red-700
+			// --paper-red-700
+			connect_error: '#d32f2f', // eslint-disable-line camelcase
+			// --paper-red-700
+			reconnect_error: '#d32f2f', // eslint-disable-line camelcase
+			connecting: '#ffa000', // --paper-amber-700
+			reconnecting: '#ffa000', // --paper-amber-700
+			pause: '#ffa000', // --paper-amber-700 should it be this color?
+			connect: '#43a047', // --paper-green-600
+			active: '#43a047' // --paper-green-600
 		}
 
 		const STATUS_TEXT_MAP = {
-			connected: 'Connected',
-			disconnected: 'Disconnected'
+			inactive: 'Inactive',
+			cleanup: 'Cleanin up for exit',
+			disconnect: 'Disconnected',
+			connect_error: 'Error connecting', // eslint-disable-line camelcase
+			reconnect_error: 'Error reconnecting', // eslint-disable-line camelcase
+			connecting: 'Connecting',
+			reconnecting: 'Reconnecting',
+			pause: 'Paused',
+			connect: 'Connected',
+			active: 'Active/Connected'
 		}
 
 		Polymer({
 			is: 'cg-drawer',
 			properties: {
 				backendUrl: String,
-				connected: Boolean,
+				connected: {
+					type: Boolean,
+					computed: '_computeConnected(socketStatus)'
+				},
 				socketStatus: String,
 				dataReplStatus: String,
 				logReplStatus: String
 			},
 			ready() {
-				// TODO: Grab current values
-				this.connected = false
-				this.socketStatus = 'disconnected'
-				this.dataReplStatus = 'disconnected'
-				this.logReplStatus = 'disconnected'
+				// Auto-update UI
+				CGBridge.on('backend:status', status => this.socketStatus = status)
+				CGBridge.on('backend:replicator:data:status', status => this.dataReplStatus = status)
+				CGBridge.on('backend:replicator:log:status', status => this.logReplStatus = status)
 
-				// TODO: only unlock controls when first batch of values is received
-				this.$.connectButton.disabled = false
-				this.$.disconnectButton.disabled = false
+				// Only unlock controls when first batch of values is received
+				CGBridge.once('backend:status', () => {
+					this.$.connectButton.disabled = false
+					this.$.disconnectButton.disabled = false
+				})
+
+				// Kickstart updates
+				CGBridge.emit('backend:status')
+				CGBridge.emit('backend:replicator:data:status')
+				CGBridge.emit('backend:replicator:log:status')
 			},
 			openLog() {
 				CGBridge.emit('protocol:run', 'log')
 			},
 			connect() {
-				this.connected = true
-				this.socketStatus = 'connected'
-				this.dataReplStatus = 'connected'
-				this.logReplStatus = 'connected'
-				// TODO: implement
+				CGBridge.emit('backend:connect', this.backendUrl)
 			},
 			disconnect() {
-				this.connected = false
-				this.socketStatus = 'disconnected'
-				this.dataReplStatus = 'disconnected'
-				this.logReplStatus = 'disconnected'
-				// TODO: implement
+				CGBridge.emit('backend:disconnect')
+			},
+			_computeConnected(socketStatus) {
+				if (socketStatus === 'inactive' || socketStatus === 'cleanup') {
+					return false
+				}
+
+				return true
 			},
 			_statusColor(status) {
 				return STATUS_COLOR_MAP[status] || 'black'
