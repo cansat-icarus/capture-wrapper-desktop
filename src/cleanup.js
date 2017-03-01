@@ -1,7 +1,19 @@
 const {dialog, app} = require('electron')
 const {window} = require('./main-window')
+const logWindow = require('./log-window')
 
 let cleanup
+
+function doCleanup() {
+	cleanup = require('./station')().cleanup()
+		.then(() => {
+			// Set cleanup to true (signal doneness) and try quitting again
+			cleanup = true
+			logWindow.setClosable(true)
+			logWindow.close()
+			app.quit()
+		})
+}
 
 app.on('before-quit', event => {
 	if (!require('./station')() || cleanup === true) {
@@ -21,8 +33,7 @@ app.on('before-quit', event => {
 		console.log('Should I really quit?')
 
 		if (process.env.NODE_ENV === 'dev' && !process.env.NO_QUICK_QUIT) {
-			cleanup = true
-			app.quit()
+			doCleanup()
 		} else {
 			dialog.showMessageBox(window, {
 				type: 'question',
@@ -32,12 +43,7 @@ app.on('before-quit', event => {
 				buttons: ['NOOOOOOO, please no. I beg you. Just get me out.', 'Yes']
 			}, choice => {
 				if (choice === 1) {
-					cleanup = require('./station')().cleanup()
-						.then(() => {
-							// Set cleanup to true (signal doneness) and try quitting again
-							cleanup = true
-							app.quit()
-						})
+					doCleanup()
 				}
 			})
 		}
@@ -45,10 +51,3 @@ app.on('before-quit', event => {
 
 	return false
 })
-
-exports.cleanup = () => {
-	return require('./station')().cleanup()
-		.then(() => {
-			cleanup = true
-		})
-}
