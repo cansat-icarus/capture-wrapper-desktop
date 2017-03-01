@@ -9,7 +9,8 @@ const logWindow = new BrowserWindow({
 	height: 550,
 	useContentSize: true,
 	show: false,
-	closable: false
+	closable: false,
+	frame: false
 })
 const bridge = new EventBridge(ipcMain, logWindow)
 
@@ -33,6 +34,8 @@ bridge.on('logwrebuild', (incrementalSeq = 0) => {
 	})
 		.on('change', logDBChangeHandler)
 })
+
+bridge.on('log:hide', () => logWindow.hide())
 
 const urlBase = process.env.NODE_ENV === 'dev' && process.env.BROWSER_SYNC !== 'false' ? 'http://localhost:3000' : `file:${__dirname}/../ui`
 
