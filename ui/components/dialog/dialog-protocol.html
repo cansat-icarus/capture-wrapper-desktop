@@ -31,8 +31,8 @@
 
 				<h3>Available Routines</h3>
 				<ul>
-					<template is="dom-repeat" items="{{_routineList}}">
-						<li>{{item.key}}: {{item.description}}</li>
+					<template is="dom-repeat" items="[[_routineList]]">
+						<li>[[item.key]]: [[item.description]]</li>
 					</template>
 				</ul>
 
@@ -40,9 +40,9 @@
 				<paper-input id="name" autofocus auto-validate validator="validateRoutineName" invalid="{{nameInvalid}}" label="Routine Name" value="{{name}}" on-keypress="_autoSubmitOnEnter"></paper-input>
 			</div>
 			<div class="buttons">
-				<paper-spinner id="spinner" active="{{spinnerActive}}"></paper-spinner>
+				<paper-spinner id="spinner" active="[[spinnerActive]]"></paper-spinner>
 				<paper-button on-click="_cancel" >Cancel</paper-button>
-				<paper-button id="runBtn" raised disabled="{{continueBtnDisable}}" on-click="_run">
+				<paper-button id="runBtn" raised disabled="[[continueBtnDisable]]" on-click="_run">
 					Run protocol routine
 				</paper-button>
 			</div>

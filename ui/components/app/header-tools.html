@@ -62,22 +62,22 @@
 		</style>
 		<div class="layout vertical">
 			<div class="layout horizontal">
-				<paper-dropdown-menu id="pathPicker" label="Serial Port Path" horizontal-align="left" no-label-float disabled="{{_disablePicker}}">
+				<paper-dropdown-menu id="pathPicker" label="Serial Port Path" horizontal-align="left" no-label-float disabled="[[_disablePicker]]">
 					<paper-listbox id="pathPickerList" class="dropdown-content" selected="{{_selectedPath}}" on-iron-select="_portPathSelected">
-						<template is="dom-repeat" items="{{portPathOptions}}" as="port">
+						<template is="dom-repeat" items="[[portPathOptions]]" as="port">
 							<paper-item>
-								<iron-icon class="color-yellow" icon="star" hidden$="{{!port.recommend}}"></iron-icon>
-								&nbsp;{{port.comName}}
+								<iron-icon class="color-yellow" icon="star" hidden$="[[!port.recommend]]"></iron-icon>
+								&nbsp;[[port.comName]]
 							</paper-item>
 						</template>
 					</paper-listbox>
 				</paper-dropdown-menu>
 				<div class="flex"></div>
-				<div class="name">Name: {{name}}</div>
+				<div class="name">Name: [[name]]</div>
 			</div>
 			<div class="layout horizontal">
-				<paper-button id="openCloseBtn" raised disabled="{{_disableBtn}}" on-click="_openClosePort">
-					{{openCloseLabel}} SerialPort
+				<paper-button id="openCloseBtn" raised disabled="[[_disableBtn]]" on-click="_openClosePort">
+					[[openCloseLabel]] SerialPort
 				</paper-button>
 				<div class="flex"></div>
 				<div class="layout horizontal center-center">
@@ -88,7 +88,7 @@
 				</div>
 			</div>
 			<div class="layout horizontal">
-				<cg-status-indicator color="{{statusColor}}">{{statusText}}</cg-status-indicator>
+				<cg-status-indicator color="[[statusColor]]">[[statusText]]</cg-status-indicator>
 			</div>
 		</div>
 	</template>

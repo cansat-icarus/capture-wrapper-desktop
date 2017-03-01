@@ -58,9 +58,9 @@
 				<paper-input id="nameConfirm" auto-validate validator="validateNameConfirm" invalid="{{nameConfirmInvalid}}" label="Confirm Station Name" value="{{nameConfirm}}" on-keypress="_autoSubmitOnEnter"></paper-input>
 			</div>
 			<div class="buttons">
-				<paper-spinner active="{{spinnerActive}}"></paper-spinner>
+				<paper-spinner active="[[spinnerActive]]"></paper-spinner>
 				<paper-button on-click="_exit" >Exit Station Software</paper-button>
-				<paper-button id="continueBtn" raised disabled="{{continueBtnDisable}}" on-click="_continue">
+				<paper-button id="continueBtn" raised disabled="[[continueBtnDisable]]" on-click="_continue">
 					Continue
 				</paper-button>
 			</div>
