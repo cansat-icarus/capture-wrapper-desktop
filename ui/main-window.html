@@ -16,8 +16,16 @@
 		<link rel="import" href="lib/style.html">
 		<link rel="import" href="components/app/app.html">
 		<link rel="import" href="components/dialog/dialog-protocol.html">
+		<link rel="import" href="bower_components/polymerfire/firebase-app.html">
 	</head>
 	<body unresolved>
+		<!-- Configure Firebase -->
+		<firebase-app
+			api-key="AIzaSyDa4qXyUauIuXuTuKyDiHdhc16XjzrQar0"
+			auth-domain="cansat-icarus-2017.firebaseapp.com"
+			database-url="https://cansat-icarus-2017.firebaseio.com">
+		</firebase-app>
+
 		<cg-app></cg-app>
 		<cg-dialog-protocol id="dialog-protocol"></cg-dialog-protocol>
 	</body>
