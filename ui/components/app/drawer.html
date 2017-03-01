@@ -4,6 +4,7 @@
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-document.html">
 <link rel="import" href="../../lib/electron-ipc.html">
 <link rel="import" href="../indicator/status-indicator.html">
 <link rel="import" href="../../lib/style.html">
@@ -43,7 +44,12 @@
 		<!-- Title -->
 		<app-toolbar>Backend Connection</app-toolbar>
 
-		<paper-input id="urlInput" disabled="[[connected]]" label="Backend URL" value="{{backendUrl}}" on-keypress="_enterToSubmitUrl"></paper-input>
+		<firebase-document
+			path="/backend/url"
+			data="{{backendUrlSuggestion}}">
+		</firebase-document>
+
+		<paper-input id="urlInput" placeholder="[[backendUrlSuggestion]]" disabled="[[connected]]" label="Backend URL" value="{{backendUrl}}" on-keypress="_enterToSubmitUrl"></paper-input>
 		<paper-button id="disconnectButton" disabled raised on-tap="disconnect" hidden="[[!connected]]">Disconnect</paper-button>
 		<paper-button id="connectButton" disabled raised on-tap="connect" hidden="[[connected]]">Connect</paper-button>
 
@@ -102,6 +108,7 @@
 			is: 'cg-drawer',
 			properties: {
 				backendUrl: String,
+				backendUrlSuggestion: String,
 				connected: {
 					type: Boolean,
 					computed: '_computeConnected(socketStatus)'
@@ -131,6 +138,11 @@
 				CGBridge.emit('protocol:run', 'log')
 			},
 			connect() {
+				// If we didn't type anything, we want the placeholder value
+				if (this.backendUrl === '') {
+					this.backendUrl = this.backendUrlSuggestion
+				}
+
 				CGBridge.emit('backend:connect', this.backendUrl)
 			},
 			disconnect() {
