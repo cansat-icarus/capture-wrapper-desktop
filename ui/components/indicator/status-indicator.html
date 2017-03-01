@@ -47,6 +47,14 @@
 		</div>
 	</template>
 	<script>
+		const COLOR_TABLE = {
+			green: '#43a047', // --paper-green-600
+			red: '#f44336', // --paper-red-500
+			darkRed: '#d32f2f', // --paper-red-700
+			yellow: '#ffa000', // --paper-amber-700
+			blue: '#2196f3' // --paper-blue-500
+		}
+
 		Polymer({
 			is: 'cg-status-indicator',
 			properties: {
@@ -62,7 +70,7 @@
 				this._tooltipChanged(this.tooltip)
 			},
 			_colorChanged(color) {
-				this.$.indicatorIcon.style.backgroundColor = color
+				this.$.indicatorIcon.style.backgroundColor = COLOR_TABLE[color] || color
 			},
 			_tooltipChanged(tooltip) {
 				if (tooltip) {
