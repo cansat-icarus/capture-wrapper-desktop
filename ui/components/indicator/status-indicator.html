@@ -65,10 +65,12 @@
 				this.$.indicatorIcon.style.backgroundColor = color
 			},
 			_tooltipChanged(tooltip) {
-				if (tooltip === '') {
-					this.$.indicatorTooltip.style.display = 'none'
-				} else {
+				if (tooltip) {
+					// There *is* a tooltip, make it displayable!
 					this.$.indicatorTooltip.style.display = 'unset'
+				} else {
+					// No tooltip, hide the tooltip box
+					this.$.indicatorTooltip.style.display = 'none'
 				}
 			}
 		})
