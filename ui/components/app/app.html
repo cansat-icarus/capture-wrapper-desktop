@@ -115,7 +115,7 @@
 			},
 			ready() {
 				// Fix dangling white stripes on the side of the header...
-				setTimeout(() => window.dispatchEvent(new Event('resize')), 500)
+				this.async(this._fixHeaderWidth, 100)
 
 				// Change button icon when maximized/unmaximize
 				CGBridge.on('maximize', maximized => this.$.maximizeToggleBtn.icon = maximized ? 'fullscreen-exit' : 'fullscreen')
@@ -130,6 +130,30 @@
 						this.$.headerTools.classList.toggle('shrink-to-0', progress > 0.5)
 					})
 				})
+			},
+			_fixHeaderWidth(lastWaitTime = 0, attemptNumber = 1, secondPass = false) {
+				// Get current width of the whole header layout, and the header itself
+				const {width: targetWidth} = this.$.headerLayout.getBoundingClientRect()
+				const {width} = this.$.header.getBoundingClientRect()
+
+				// Calculate how much time we need to wait
+				const waitTime = lastWaitTime + (100 * Math.log10(attemptNumber + 1))
+
+				// Check if we can just stop
+				if (width === targetWidth) {
+					// Sometimes it's briefly correct during load
+					if (!secondPass) {
+						// Do it just one more time to check we were right
+						setTimeout(this._fixHeaderWidth.bind(this, waitTime, attemptNumber + 1, true), waitTime)
+					}
+					return
+				}
+
+				// The fix:
+				this.$.header.resetLayout()
+
+				// Keep going, it has not yet been fixed
+				setTimeout(this._fixHeaderWidth.bind(this, waitTime, attemptNumber + 1), waitTime)
 			}
 		})
 	</script>
