@@ -16,6 +16,12 @@
 				display: block;
 			}
 
+			#container {
+				display: flex;
+				flex-direction: column;
+				height: 100vh;
+			}
+
 			app-header {
 				height: 42px;
 				background: var(--light-primary-color);
@@ -34,11 +40,17 @@
 				align-items: center;
 			}
 
+			iron-list {
+				padding-top: 10px;
+				padding-left: 10px;
+				padding-right: 10px;
+			}
+
 			.flex {
 				flex: 1;
 			}
 		</style>
-		<app-header-layout>
+		<div id="container">
 			<app-header fixed effects="waterfall">
 				<div id="controls">
 					<div>Last Seq: [[lastSeq]]</div>
@@ -49,12 +61,12 @@
 				</div>
 			</app-header>
 
-			<iron-list id="list" target="document" items="[[logItems]]">
+			<iron-list id="list" class="flex" items="[[logItems]]">
 				<template>
 					<cg-log-item index="[[index]]" data="[[item]]" on-iron-resize="_onResize"></cg-log-item>
 				</template>
 			</iron-list>
-		</app-header-layout>
+		</div>
 	</template>
 	<script>
 		Polymer({
@@ -99,6 +111,36 @@
 			_handleNewLogDoc(doc, seq) {
 				this.lastSeq = seq
 				this.unshift('logItems', doc)
+
+				// If we have an error alert the user
+				if (doc.level >= 50) {
+					this._notifyUserOfError(doc)
+				}
+			},
+			_notifyUserOfError(logEntry) {
+				const notification = new Notification('Error! Click to open log', {
+					body: logEntry.msg,
+					requiresUserInteraction: true
+				})
+
+				notification.onclick = () => this._openWindowWithEntry(logEntry)
+			},
+			_openWindowWithEntry(logEntry) {
+				// Scroll to the log entry
+				this.$.list.scrollToItem(logEntry)
+
+				// Delay a bit, just in case some log items get inserted in the meantime
+				setTimeout(() => {
+					// Find the corresponding element
+					for (const el of this.$.list.children) {
+						if (el.data === logEntry) {
+							// This is it! Tap it in order to make the detail view open
+							el._onTap()
+						}
+					}
+
+					CGBridge.emit('log:show')
+				}, 100)
 			},
 			_onResize(event) {
 				try {

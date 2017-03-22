@@ -31,7 +31,7 @@ bridge.on('log:seedDocs', () => {
 	}
 
 	// Get last seq number
-	logDB.changes({since: 0, include_docs: true})
+	logDB.changes({since: 0, include_docs: true}) // eslint-disable-line camelcase
 		.then(seed => {
 			// Send the big batch of docs
 			bridge.emit('log:seedDocs', seed)
@@ -47,6 +47,8 @@ bridge.on('log:seedDocs', () => {
 })
 
 bridge.on('log:hide', () => logWindow.hide())
+
+bridge.on('log:show', () => logWindow.show())
 
 const urlBase = process.env.NODE_ENV === 'dev' && process.env.BROWSER_SYNC !== 'false' ? 'http://localhost:3000' : `file:${__dirname}/../ui`
 
