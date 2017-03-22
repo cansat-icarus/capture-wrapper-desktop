@@ -9,7 +9,8 @@ const logWindow = new BrowserWindow({
 	height: 550,
 	useContentSize: true,
 	show: false,
-	closable: false
+	closable: false,
+	frame: false
 })
 const bridge = new EventBridge(ipcMain, logWindow)
 
@@ -17,22 +18,37 @@ const bridge = new EventBridge(ipcMain, logWindow)
 let logDBListener
 
 function logDBChangeHandler({doc, seq}) {
-	if (!bridge) return
-	bridge.emit('logdoc', doc, seq)
+	if (!bridge) {
+		return
+	}
+
+	bridge.emit('log:doc', doc, seq)
 }
 
-bridge.on('logwrebuild', (incrementalSeq = 0) => {
+bridge.on('log:seedDocs', () => {
 	if (logDBListener) {
 		logDBListener.cancel()
 	}
 
-	logDBListener = logDB.changes({
-		live: true,
-		include_docs: true, // eslint-disable-line camelcase
-		since: incrementalSeq
-	})
-		.on('change', logDBChangeHandler)
+	// Get last seq number
+	logDB.changes({since: 0, include_docs: true}) // eslint-disable-line camelcase
+		.then(seed => {
+			// Send the big batch of docs
+			bridge.emit('log:seedDocs', seed)
+
+			// Setup the changes listener to start in lastSeq
+			logDBListener = logDB.changes({
+				live: true,
+				include_docs: true, // eslint-disable-line camelcase
+				since: seed.last_seq
+			})
+				.on('change', logDBChangeHandler)
+		})
 })
+
+bridge.on('log:hide', () => logWindow.hide())
+
+bridge.on('log:show', () => logWindow.show())
 
 const urlBase = process.env.NODE_ENV === 'dev' && process.env.BROWSER_SYNC !== 'false' ? 'http://localhost:3000' : `file:${__dirname}/../ui`
 

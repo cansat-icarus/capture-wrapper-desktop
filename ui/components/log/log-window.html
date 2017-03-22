@@ -1,7 +1,12 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="../../bower_components/app-layout/app-header-layout/app-header-layout.html">
+<link rel="import" href="../../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
 <link rel="import" href="../../bower_components/iron-list/iron-list.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
-<link rel="import" href="../../bower_components/polymer/polymer.html">
-<link rel="import" href="../log/log-item.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="log-item.html">
 <link rel="import" href="../../lib/style.html">
 
 <dom-module id="cg-log-window">
@@ -11,32 +16,52 @@
 				display: block;
 			}
 
-			#list, #listContainer {
-				height: 100%;
+			#container {
+				display: flex;
+				flex-direction: column;
+				height: 100vh;
+			}
+
+			app-header {
+				height: 42px;
+				background: var(--light-primary-color);
+
+				/* Make the window draggable */
+				-webkit-app-region: drag;
+				user-select: none;
+				-webkit-user-select: none;
 			}
 
 			#controls {
-				background: var(--light-primary-color);
-				opacity: 1;
 				padding-left: 1em;
+
 				display: flex;
 				justify-content: space-around;
 				align-items: center;
-				height: 42px;
+			}
+
+			iron-list {
+				padding-top: 10px;
+				padding-left: 10px;
+				padding-right: 10px;
 			}
 
 			.flex {
 				flex: 1;
 			}
 		</style>
-		<div id="controls">
-			<div>Last Seq: [[lastSeq]]</div>
-			<div class="flex"></div>
-			<paper-button on-tap="clearCurrentList">Clear</paper-button>
-			<paper-button on-tap="rebuildList">Reload Log</paper-button>
-		</div>
-		<div id="listContainer">
-			<iron-list id="list" target="listContainer" items="[[logItems]]">
+		<div id="container">
+			<app-header fixed effects="waterfall">
+				<div id="controls">
+					<div>Last Seq: [[lastSeq]]</div>
+					<div class="flex"></div>
+					<paper-button on-tap="clear">Clear</paper-button>
+					<paper-icon-button icon="refresh" on-tap="reload"></paper-icon-button>
+					<paper-icon-button icon="close" on-tap="close"></paper-icon-button>
+				</div>
+			</app-header>
+
+			<iron-list id="list" class="flex" items="[[logItems]]">
 				<template>
 					<cg-log-item index="[[index]]" data="[[item]]" on-iron-resize="_onResize"></cg-log-item>
 				</template>
@@ -54,18 +79,68 @@
 				lastSeq: Number
 			},
 			ready() {
-				this.rebuildList()
-				CGBridge.on('logdoc', (doc, seq) => {
-					this.lastSeq = seq
-					this.unshift('logItems', doc)
+				this.seeded = new Promise(resolve => { this._resolveSeeded = resolve })
+
+				// Grab initial batch of log entries
+				CGBridge.once('log:seedDocs', seed => {
+					this.lastSeq = seed.last_seq
+
+					for (let i = 0; i < seed.results.length; i++) {
+						this.unshift('logItems', seed.results[i].doc)
+					}
+
+					this._resolveSeeded()
+					this._handleNewLogDocWaitForSeed = this._handleNewLogDoc
 				})
+				CGBridge.emit('log:seedDocs')
+
+				CGBridge.on('log:doc', (doc, seq) => this._handleNewLogDocWaitForSeed(doc, seq))
 			},
-			rebuildList() {
-				CGBridge.emit('logwrebuild', 0)
-				this.clearCurrentList()
-			},
-			clearCurrentList() {
+			clear() {
 				this.logItems = []
+			},
+			reload() {
+				window.location.reload()
+			},
+			close() {
+				CGBridge.emit('log:hide')
+			},
+			_handleNewLogDocWaitForSeed(doc, seq) {
+				this.seeded.then(() => this._handleNewLogDoc(doc, seq))
+			},
+			_handleNewLogDoc(doc, seq) {
+				this.lastSeq = seq
+				this.unshift('logItems', doc)
+
+				// If we have an error alert the user
+				if (doc.level >= 50) {
+					this._notifyUserOfError(doc)
+				}
+			},
+			_notifyUserOfError(logEntry) {
+				const notification = new Notification('Error! Click to open log', {
+					body: logEntry.msg,
+					requiresUserInteraction: true
+				})
+
+				notification.onclick = () => this._openWindowWithEntry(logEntry)
+			},
+			_openWindowWithEntry(logEntry) {
+				// Scroll to the log entry
+				this.$.list.scrollToItem(logEntry)
+
+				// Delay a bit, just in case some log items get inserted in the meantime
+				setTimeout(() => {
+					// Find the corresponding element
+					for (const el of this.$.list.children) {
+						if (el.data === logEntry) {
+							// This is it! Tap it in order to make the detail view open
+							el._onTap()
+						}
+					}
+
+					CGBridge.emit('log:show')
+				}, 100)
 			},
 			_onResize(event) {
 				try {

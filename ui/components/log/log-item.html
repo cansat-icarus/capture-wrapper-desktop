@@ -41,9 +41,11 @@
 				<div id="hmsg">[[data.msg]]</div>
 				<div class="flex"></div>
 			</div>
-			<iron-collapse id="collapse" on-transitionstart="_startTransition" on-transitionend="_stopTransition">
-				<juicy-jsoneditor id="editor" mode="view" name="Log Object" json="[[data]]" on-tap="_handleEditorTap"></juicy-jsoneditor>
-			</iron-collapse>
+			<template is="dom-if" if="[[_enableDetail]]" on-dom-change="_onDetailDOMChange">
+				<iron-collapse id="collapse" on-transitionstart="_startTransition" on-transitionend="_stopTransition">
+					<juicy-jsoneditor id="editor" mode="view" name="Log Object" json="[[data]]" on-tap="_handleEditorTap"></juicy-jsoneditor>
+				</iron-collapse>
+			</template>
 		</paper-material>
 	</template>
 	<script>
@@ -73,6 +75,10 @@
 			properties: {
 				data: Object,
 				index: Number,
+				_enableDetail: {
+					type: Boolean,
+					value: false
+				},
 				_level: {
 					type: String,
 					computed: 'computeLevelStr(data.level)'
@@ -95,7 +101,7 @@
 				return BUNYAN_LEVEL_STRINGS.get(level) || 'Level?'
 			},
 			computeTimestamp(timestamp) {
-				return moment(timestamp).format('YYYY-MM-DD HH:mm:ss [UTC]Z')
+				return moment(timestamp).format('HH:mm:ss')
 			},
 			_tickTransition() {
 				if (!this._transitioning) {
@@ -115,9 +121,30 @@
 				this._transitioning = false
 			},
 			_onTap() {
-				// Open/close the collapse
-				console.log('toggle')
-				this.$.collapse.toggle()
+				// Signal that the collapse should be opened
+				this._shouldOpenCollapse = true
+
+				// Only now will we put the collapse in the DOM
+				// It will be opened when dom-change fires in the template
+				// See _onDetailDOMChange()
+				this._enableDetail = true
+			},
+			_onDetailDOMChange(event) {
+				if (this._shouldOpenCollapse) {
+					try {
+						// Try opening the collapse
+						this.$$('#collapse').opened = true
+
+						// If we're still here, it was successful! Mark it open
+						this._shouldOpenCollapse = undefined
+
+						// Now we can just toggle it during onTap
+						this.$.collapse = this.$$('#collapse')
+						this._onTap = function() {
+							this.$.collapse.toggle()
+						}
+					} catch(err) {}
+				}
 			},
 			_handleEditorTap(event) {
 				event.stopPropagation()
