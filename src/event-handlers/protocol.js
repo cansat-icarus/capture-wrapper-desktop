@@ -35,12 +35,14 @@ const routines = {
 	}
 }
 
-bridge.on('protocol:run', routine => {
+bridge.on('protocol:run', routineSnakeCase => {
+	const routine = camelCase(routineSnakeCase)
+
 	if (!routines[routine]) {
 		return bridge.emit('protocol:done', 'ROUTINE DOES NOT EXIST: ' + routine)
 	}
 
-	routines[camelCase(routine)]()
+	routines[routine]()
 		.then(message => bridge.emit('protocol:done', message))
 })
 
