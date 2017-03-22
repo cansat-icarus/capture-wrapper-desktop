@@ -8,11 +8,11 @@ const routines = {
 		return station.getAvailablePorts()
 			.then(ports => station.serial.setPath(ports[0].comName))
 			.then(() => station.serial.open())
-			.then(routines.ui_lock)
+			.then(routines.uiLock)
 	},
 	autoClose() {
 		return station.serial.close()
-			.then(routines.ui_lock)
+			.then(routines.uiLock)
 	},
 	log() {
 		require('../log-window').show()
