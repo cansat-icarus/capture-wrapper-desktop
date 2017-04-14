@@ -13,7 +13,7 @@
   "main": "src/index.js",
   "scripts": {
     "test": "xo",
-    "build": "export NODE_ENV='production'; electron-packager . $npm_package_productName --out=dist --ignore='^/dist$' --prune --asar --all --version=$npm_package_electronVersion",
+    "build": "export NODE_ENV='production'; electron-packager . $npm_package_productName --out=dist --ignore='^/dist$' --prune --asar",
     "start": "NODE_ENV='dev' electron . & browser-sync start --server ui --files ui --no-open",
     "postinstall": "electron-rebuild"
   },
