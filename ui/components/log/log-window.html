@@ -79,7 +79,7 @@
 				lastSeq: Number
 			},
 			ready() {
-				this.seeded = new Promise(resolve => { this._resolveSeeded = resolve })
+				this.seeded = new Promise(resolve => this._resolveSeeded = resolve)
 
 				// Grab initial batch of log entries
 				CGBridge.once('log:seedDocs', seed => {

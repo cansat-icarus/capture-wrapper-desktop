@@ -129,7 +129,7 @@
 				// See _onDetailDOMChange()
 				this._enableDetail = true
 			},
-			_onDetailDOMChange(event) {
+			_onDetailDOMChange() {
 				if (this._shouldOpenCollapse) {
 					try {
 						// Try opening the collapse
@@ -140,10 +140,10 @@
 
 						// Now we can just toggle it during onTap
 						this.$.collapse = this.$$('#collapse')
-						this._onTap = function() {
+						this._onTap = function () {
 							this.$.collapse.toggle()
 						}
-					} catch(err) {}
+					} catch (err) {}
 				}
 			},
 			_handleEditorTap(event) {
