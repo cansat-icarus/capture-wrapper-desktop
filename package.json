@@ -24,6 +24,7 @@
   },
   "devDependencies": {
     "browser-sync": "^2.18.8",
+    "cz-conventional-changelog": "^2.0.0",
     "devtron": "^1.4.0",
     "electron": "1.4.15",
     "electron-packager": "^8.5.2",
@@ -84,5 +85,10 @@
         }
       }
     ]
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   }
 }
