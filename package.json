@@ -18,8 +18,8 @@
     "postinstall": "electron-rebuild"
   },
   "dependencies": {
+    "@cansat-icarus/capture-lib": "^1.0.3",
     "camelcase": "^4.0.0",
-    "capture-lib": "file:../capture-lib",
     "rimraf": "^2.6.1"
   },
   "devDependencies": {
