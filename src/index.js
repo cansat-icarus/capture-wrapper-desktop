@@ -1,7 +1,7 @@
 const {app, BrowserWindow, ipcMain} = require('electron')
 
 // Set dbNamePrefix, for a better place to save the DBs
-global.dbNamePrefix = process.env.DB_PATH || app.getPath('userData')
+global.pathPrefix = process.env.DB_PATH || app.getPath('userData')
 
 let dialogWindow
 
