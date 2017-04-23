@@ -9,7 +9,7 @@
     "name": "André Breda",
     "email": "addobandre99@gmail.com"
   },
-  "electronVersion": "1.4.15",
+  "electronVersion": "1.6.5",
   "main": "src/index.js",
   "scripts": {
     "test": "xo",
@@ -26,7 +26,7 @@
     "browser-sync": "^2.18.8",
     "cz-conventional-changelog": "^2.0.0",
     "devtron": "^1.4.0",
-    "electron": "1.4.15",
+    "electron": "1.6.5",
     "electron-packager": "^8.5.2",
     "electron-rebuild": "^1.5.7",
     "eslint-plugin-html": "^2.0.1",
