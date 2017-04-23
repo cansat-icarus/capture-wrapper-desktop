@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "@cansat-icarus/capture-lib": "^2.1.0",
-    "camelcase": "^4.0.0",
+    "camelcase": "^4.1.0",
     "rimraf": "^2.6.1"
   },
   "devDependencies": {
@@ -27,11 +27,11 @@
     "cz-conventional-changelog": "^2.0.0",
     "devtron": "^1.4.0",
     "electron": "1.6.5",
-    "electron-packager": "^8.5.2",
+    "electron-packager": "^8.6.0",
     "electron-rebuild": "^1.5.7",
     "eslint-plugin-html": "^2.0.1",
     "eslint-plugin-json": "^1.2.0",
-    "xo": "^0.17.1"
+    "xo": "^0.18.1"
   },
   "xo": {
     "esnext": true,
