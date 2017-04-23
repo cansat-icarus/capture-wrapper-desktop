@@ -32,8 +32,6 @@ ipcMain.on('asynchronous-message', messageListener)
 
 // Create window when ready
 app.on('ready', () => {
-	// if(process.env.NODE_ENV === 'dev') require('devtron').install()
-
 	// DEVELOPMENT ONLY: circumvent annoying prompt
 	if (process.env.NODE_ENV === 'dev' && !process.env.NO_QUICK_START) {
 		// Set a dev-only name!

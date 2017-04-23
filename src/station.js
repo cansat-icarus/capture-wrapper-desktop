@@ -1,5 +1,4 @@
 const Station = require('@cansat-icarus/capture-lib')
-// const crashReporter = require('crash-reporter')
 
 let station
 
