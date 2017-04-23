@@ -44,7 +44,7 @@ app.on('ready', () => {
 	// Create the name dialog window
 	dialogWindow = new BrowserWindow({
 		width: 420,
-		height: 420,
+		height: 430,
 		frame: false
 	})
 
