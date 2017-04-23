@@ -14,6 +14,12 @@ const logWindow = new BrowserWindow({
 })
 const bridge = new EventBridge(ipcMain, logWindow)
 
+logWindow.on('ready-to-show', () => {
+	// Move the logWindow to show the main window behind it
+	const currentPosition = logWindow.getPosition()
+	logWindow.setPosition(currentPosition[0] + 50, currentPosition[1] + 50)
+})
+
 // Handle Log db rebuild
 let logDBListener
 
