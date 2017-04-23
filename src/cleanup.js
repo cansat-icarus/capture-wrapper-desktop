@@ -40,7 +40,7 @@ app.on('before-quit', event => {
 				title: 'Confirm exit',
 				message: 'Are you REALLY sure you want to quit?',
 				// Funny way of making the no button bigger
-				buttons: ['NOOOOOOO, please no. I beg you. Just get me out.', 'Yes']
+				buttons: ['NOOOOOOO! Please no, I beg you. Just let me stay.', 'Yes']
 			}, choice => {
 				if (choice === 1) {
 					doCleanup()
