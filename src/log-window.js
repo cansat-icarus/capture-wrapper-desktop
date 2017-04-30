@@ -38,16 +38,22 @@ bridge.on('log:seedDocs', () => {
 	}
 
 	// Get last seq number
-	logDB.changes({since: 0, include_docs: true}) // eslint-disable-line camelcase
+	logDB.allDocs({
+		include_docs: true, // eslint-disable-line camelcase
+		descending: true,
+		limit: 50 // Do not fill the main process with log entries
+	})
 		.then(seed => {
 			// Send the big batch of docs
-			bridge.emit('log:seedDocs', seed)
+			bridge.emit('log:seedDocs', seed.rows)
 
 			// Setup the changes listener to start in lastSeq
+			// There may be a small chance of one or two log entries being missing,
+			// but I prefer that to consuming 2GB of memory on startup...
 			logDBListener = logDB.changes({
 				live: true,
 				include_docs: true, // eslint-disable-line camelcase
-				since: seed.last_seq
+				since: 'now'
 			})
 				.on('change', logDBChangeHandler)
 		})

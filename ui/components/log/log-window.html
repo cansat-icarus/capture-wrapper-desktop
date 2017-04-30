@@ -79,22 +79,15 @@
 				lastSeq: Number
 			},
 			ready() {
-				this.seeded = new Promise(resolve => this._resolveSeeded = resolve)
-
 				// Grab initial batch of log entries
 				CGBridge.once('log:seedDocs', seed => {
-					this.lastSeq = seed.last_seq
-
-					for (let i = 0; i < seed.results.length; i++) {
-						this.unshift('logItems', seed.results[i].doc)
+					for (let i = 0; i < seed.length; i++) {
+						this.push('logItems', seed[i].doc)
 					}
-
-					this._resolveSeeded()
-					this._handleNewLogDocWaitForSeed = this._handleNewLogDoc
 				})
 				CGBridge.emit('log:seedDocs')
 
-				CGBridge.on('log:doc', (doc, seq) => this._handleNewLogDocWaitForSeed(doc, seq))
+				CGBridge.on('log:doc', (doc, seq) => this._handleNewLogDoc(doc, seq))
 			},
 			clear() {
 				this.logItems = []
@@ -104,9 +97,6 @@
 			},
 			close() {
 				CGBridge.emit('log:hide')
-			},
-			_handleNewLogDocWaitForSeed(doc, seq) {
-				this.seeded.then(() => this._handleNewLogDoc(doc, seq))
 			},
 			_handleNewLogDoc(doc, seq) {
 				this.lastSeq = seq
