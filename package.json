@@ -13,8 +13,8 @@
   "main": "src/index.js",
   "scripts": {
     "test": "xo",
-    "build": "export NODE_ENV='production'; electron-packager . $npm_package_productName --out=dist --ignore='^/dist$' --prune --asar --overwrite",
-    "start": "NODE_ENV='dev' electron . & browser-sync start --server ui --files ui --no-open",
+    "build": "cross-env NODE_ENV=production electron-packager . $npm_package_productName --out=dist --ignore='^/dist$' --prune --asar --overwrite",
+    "start": "cross-env NODE_ENV=dev electron . & browser-sync start --server ui --files ui --no-open",
     "postinstall": "electron-rebuild"
   },
   "dependencies": {
@@ -24,6 +24,7 @@
   },
   "devDependencies": {
     "browser-sync": "^2.18.8",
+    "cross-env": "^4.0.0",
     "cz-conventional-changelog": "^2.0.0",
     "devtron": "^1.4.0",
     "electron": "1.6.6",
