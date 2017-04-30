@@ -34,6 +34,7 @@ function logDBChangeHandler({doc, seq}) {
 bridge.on('log:seedDocs', () => {
 	if (logDBListener) {
 		logDBListener.cancel()
+		logDBListener = null
 	}
 
 	// Get last seq number
