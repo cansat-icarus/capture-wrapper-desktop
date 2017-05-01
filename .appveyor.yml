@@ -25,4 +25,6 @@ build: off # We do building at the same time we deploy
 test: off # We test in Travis CI, no need for doing it more than once
 
 # Build and publish to github (only on tag pushes)
-deploy_script: ./node_modules/.bin/electron-forge publish
+deploy_script:
+  - yarn global add electron-forge
+  - electron-forge publish
