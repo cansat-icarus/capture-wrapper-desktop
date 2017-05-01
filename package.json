@@ -25,7 +25,7 @@
     "make": "electron-forge make"
   },
   "dependencies": {
-    "@cansat-icarus/capture-lib": "^2.1.0",
+    "@cansat-icarus/capture-lib": "^4.0.0",
     "camelcase": "^4.1.0",
     "electron-compile": "^6.4.1",
     "rimraf": "^2.6.1"
