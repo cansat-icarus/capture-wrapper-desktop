@@ -30,9 +30,12 @@ cache:
 # Tests! (Currently just a linter)
 script: yarn run test
 
+before_deploy:
+  - yarn global add electron-forge
+
 # Now build things
 deploy:
   provider: script
-  script: ./node_modules/.bin/electron-forge publish
+  script: electron-forge publish
   on:
     tags: true
