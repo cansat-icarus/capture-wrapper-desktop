@@ -4,6 +4,13 @@
   "productName": "IcarusCanSatGroundStationDesktop",
   "version": "0.1.0",
   "description": "Ground station software for the Icarus CanSat (Desktop version)",
+  "bugs": {
+    "url": "https://github.com/cansat-icarus/capture-wrapper-desktop/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cansat-icarus/capture-wrapper-desktop.git"
+  },
   "license": "MIT",
   "author": {
     "name": "André Breda",
