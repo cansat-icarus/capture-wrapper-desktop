@@ -1,5 +1,5 @@
 node_modules
-dist
+out
 ui/bower_components
 
 # Make development easier, ignore databases and log files
