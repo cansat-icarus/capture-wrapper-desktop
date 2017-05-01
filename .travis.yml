@@ -36,6 +36,7 @@ before_deploy:
 # Now build things
 deploy:
   provider: script
+  skip_cleanup: true
   script: electron-forge publish
   on:
     tags: true
