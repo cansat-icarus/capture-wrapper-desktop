@@ -1,0 +1,176 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-document.html">
+<link rel="import" href="../../lib/electron-ipc.html">
+<link rel="import" href="../indicator/status-indicator.html">
+<link rel="import" href="../../lib/style.html">
+
+<dom-module id="cg-drawer">
+	<template>
+		<style is="custom-style" include="iron-flex">
+			:host {
+				display: flex;
+				flex-direction: column;
+				padding: 0 0.5em;
+			}
+
+			app-toolbar {
+				-webkit-app-region: drag;
+				user-select: none;
+				-webkit-user-select: none;
+			}
+
+			#connectButton {
+				background-color: var(--paper-green-500);
+				color: var(--text-primary-color);
+			}
+
+			#disconnectButton {
+				background-color: var(--paper-red-500);
+				color: var(--text-primary-color);
+			}
+
+			#logButton {
+				margin-bottom: 0.5em;
+			}
+
+			.spacer {
+				height: 10px;
+			}
+
+			cg-status-indicator {
+				margin-top: 1em;
+				--cg-status-indicator-size: 0.6em;
+			}
+		</style>
+		<!-- Title -->
+		<app-toolbar>Backend Connection</app-toolbar>
+
+		<firebase-document
+			path="/backend/url"
+			data="{{backendUrlSuggestion}}">
+		</firebase-document>
+
+		<paper-input id="urlInput" placeholder="[[backendUrlSuggestion]]" disabled="[[connected]]" label="Backend URL" value="{{backendUrl}}" on-keypress="_enterToSubmitUrl"></paper-input>
+		<paper-button id="disconnectButton" disabled raised on-tap="disconnect" hidden="[[!connected]]">Disconnect</paper-button>
+		<paper-button id="connectButton" disabled raised on-tap="connect" hidden="[[connected]]">Connect</paper-button>
+
+		<div class="spacer"></div>
+
+		<cg-status-indicator color="[[_statusColor(socketStatus)]]" tooltip="[[_statusText(socketStatus)]]">
+			Backend Connection
+		</cg-status-indicator>
+		<cg-status-indicator color="[[_statusColor(dataReplStatus)]]" tooltip="[[_statusText(dataReplStatus)]]">
+			Data Replication
+		</cg-status-indicator>
+		<cg-status-indicator color="[[_statusColor(logReplStatus)]]" tooltip="[[_statusText(logReplStatus)]]">
+			Log Replication
+		</cg-status-indicator>
+
+		<div class="flex"></div>
+
+		<!-- Open Log Window -->
+		<paper-button id="logButton" raised on-tap="openLog">
+			<iron-icon icon="icons:open-in-new"></iron-icon>
+			&nbsp;Open Log
+		</paper-button>
+
+	</template>
+	<script>
+	(function () {
+		const STATUS_COLOR_MAP = {
+			inactive: 'blue',
+			cleanup: 'blue',
+			disconnect: 'red',
+			connect_error: 'darkRed', // eslint-disable-line camelcase
+			reconnect_error: 'darkRed', // eslint-disable-line camelcase
+			connecting: 'yellow',
+			reconnecting: 'yellow',
+			pause: 'yellow',
+			connect: 'green',
+			active: 'green'
+		}
+
+		const STATUS_TEXT_MAP = {
+			inactive: 'Inactive',
+			cleanup: 'Cleanin up for exit',
+			disconnect: 'Disconnected',
+			connect_error: 'Error connecting', // eslint-disable-line camelcase
+			reconnect_error: 'Error reconnecting', // eslint-disable-line camelcase
+			connecting: 'Connecting',
+			reconnecting: 'Reconnecting',
+			pause: 'Paused',
+			connect: 'Connected',
+			active: 'Active/Connected'
+		}
+
+		Polymer({
+			is: 'cg-drawer',
+			properties: {
+				backendUrl: String,
+				backendUrlSuggestion: String,
+				connected: {
+					type: Boolean,
+					computed: '_computeConnected(socketStatus)'
+				},
+				socketStatus: String,
+				dataReplStatus: String,
+				logReplStatus: String
+			},
+			ready() {
+				// Auto-update UI
+				CGBridge.on('backend:status', status => this.socketStatus = status)
+				CGBridge.on('backend:replicator:data:status', status => this.dataReplStatus = status)
+				CGBridge.on('backend:replicator:log:status', status => this.logReplStatus = status)
+
+				// Only unlock controls when first batch of values is received
+				CGBridge.once('backend:status', () => {
+					this.$.connectButton.disabled = false
+					this.$.disconnectButton.disabled = false
+				})
+
+				// Kickstart updates
+				CGBridge.emit('backend:status')
+				CGBridge.emit('backend:replicator:data:status')
+				CGBridge.emit('backend:replicator:log:status')
+			},
+			openLog() {
+				CGBridge.emit('protocol:run', 'log')
+			},
+			connect() {
+				// If we didn't type anything, we want the placeholder value
+				if (this.backendUrl === '') {
+					this.backendUrl = this.backendUrlSuggestion
+				}
+
+				CGBridge.emit('backend:connect', this.backendUrl)
+			},
+			disconnect() {
+				CGBridge.emit('backend:disconnect')
+			},
+			_computeConnected(socketStatus) {
+				if (socketStatus === 'inactive' || socketStatus === 'cleanup') {
+					return false
+				}
+
+				return true
+			},
+			_statusColor(status) {
+				return STATUS_COLOR_MAP[status] || 'black'
+			},
+			_statusText(status) {
+				return STATUS_TEXT_MAP[status] || 'Unknown status'
+			},
+			_enterToSubmitUrl(event) {
+				if (event.charCode === 13) {
+					this.connect()
+				}
+			}
+		})
+	})()
+	</script>
+</dom-module>

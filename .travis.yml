@@ -1,0 +1,38 @@
+sudo: false # Stop annoying sudo warnings from travis
+
+language: node_js
+node_js: v6
+
+# Build for both Linux and mac OS
+os:
+  - linux
+  - osx
+
+# Native module support
+# We need a C++11 compiler
+env:
+  - CXX=g++-4.8
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - g++-4.8
+      - rpm
+
+cache:
+  yarn: true
+  directories:
+    - node_modules
+    - $HOME/.electron
+    - $HOME/.cache
+
+# Tests! (Currently just a linter)
+script: yarn run test
+
+# Now build things
+deploy:
+  provider: script
+  script: ./node_modules/.bin/electron-forge publish
+  on:
+    tags: true

@@ -1,0 +1,28 @@
+# Only run this on the master branch (that contains stable code)
+branches:
+  only:
+    - master
+
+# Windows 64bit, ran in NodeJS 6 (will be supported for a while)
+platform:
+  - x64
+environment:
+  nodejs_version: "6"
+
+# Cache yarn for speed
+cache:
+  - "%LOCALAPPDATA%\\Yarn"
+  - "%USERPROFILE%\\.electron"
+
+# Install scripts. (runs after repo cloning)
+install:
+  # Get the latest stable version of Node.js or io.js
+  - ps: Install-Product node $env:nodejs_version x64
+  # Install modules
+  - yarn install
+
+build: off # We do building at the same time we deploy
+test: off # We test in Travis CI, no need for doing it more than once
+
+# Build and publish to github (only on tag pushes)
+deploy_script: ./node_modules/.bin/electron-forge publish

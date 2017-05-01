@@ -1,0 +1,128 @@
+{
+  "name": "capture-wrapper-desktop",
+  "private": true,
+  "productName": "IcarusCanSatGroundStationDesktop",
+  "version": "4.0.0",
+  "description": "Ground station software for the Icarus CanSat (Desktop version)",
+  "bugs": {
+    "url": "https://github.com/cansat-icarus/capture-wrapper-desktop/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cansat-icarus/capture-wrapper-desktop.git"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "André Breda",
+    "email": "addobandre99@gmail.com"
+  },
+  "main": "src/index.js",
+  "scripts": {
+    "lint": "xo",
+    "test": "npm run lint",
+    "start": "electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make"
+  },
+  "dependencies": {
+    "@cansat-icarus/capture-lib": "^4.0.0",
+    "camelcase": "^4.1.0",
+    "electron-compile": "^6.4.1",
+    "rimraf": "^2.6.1"
+  },
+  "devDependencies": {
+    "babel-plugin-transform-async-to-generator": "^6.24.1",
+    "babel-preset-env": "^1.4.0",
+    "babel-preset-react": "^6.24.1",
+    "cz-conventional-changelog": "^2.0.0",
+    "devtron": "^1.4.0",
+    "electron-prebuilt-compile": "1.6.6",
+    "eslint-plugin-html": "^2.0.1",
+    "eslint-plugin-json": "^1.2.0",
+    "xo": "^0.18.1"
+  },
+  "xo": {
+    "esnext": true,
+    "semicolon": false,
+    "extensions": [
+      "html",
+      "json"
+    ],
+    "plugins": [
+      "html",
+      "json"
+    ],
+    "ignores": [
+      "docs/**",
+      "ui/lib/app-header-layout.html"
+    ],
+    "rules": {
+      "new-cap": [
+        "error",
+        {
+          "capIsNewExceptions": [
+            "Polymer",
+            "DateTimeFormat"
+          ]
+        }
+      ],
+      "no-return-assign": "off",
+      "no-implicit-coercion": "off"
+    },
+    "overrides": [
+      {
+        "files": "{bower,package}.json",
+        "spaces": 2
+      },
+      {
+        "files": "**/*.html",
+        "envs": [
+          "browser"
+        ],
+        "globals": [
+          "CGBridge",
+          "CGPacket",
+          "CGScoreBubbleBehavior",
+          "CGStationScoreBubbleBehavior",
+          "EventEmitter",
+          "moment",
+          "Polymer"
+        ],
+        "rules": {
+          "unicorn/no-abusive-eslint-disable": 0
+        }
+      }
+    ]
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    },
+    "forge": {
+      "make_targets": {
+        "win32": [
+          "squirrel"
+        ],
+        "darwin": [
+          "zip"
+        ],
+        "linux": [
+          "deb",
+          "rpm"
+        ]
+      },
+      "electronPackagerConfig": {
+        "name": "Icarus Ground Station",
+        "asar": true,
+        "packageManager": "yarn"
+      },
+      "electronWinstallerConfig": {
+        "name": "Icarus Ground Station"
+      },
+      "github_repository": {
+        "owner": "cansat-icarus",
+        "name": "capture-wrapper-desktop"
+      }
+    }
+  }
+}

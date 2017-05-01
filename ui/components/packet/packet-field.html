@@ -1,0 +1,51 @@
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="cg-packet-field">
+	<template>
+		<style>
+			paper-input {
+				--paper-input-container-underline: {
+					display: none;
+				};
+				--paper-input-container-disabled: {
+					opacity: 1;
+				};
+			}
+		</style>
+		<paper-input id="input" always-float-label disabled tabindex="-1" label="[[label]]" value="[[value]]"></paper-input>
+	</template>
+	<script>
+		Polymer({
+			is: 'cg-packet-field',
+			hostAttributes: {
+				tabIndex: -1
+			},
+			listeners: {
+				focus: '_blur'
+			},
+			properties: {
+				value: String,
+				label: String,
+				noIgnore: {
+					type: Boolean,
+					value: false
+				}
+			},
+			observers: ['_updateDisplay(value, noIgnore)'],
+			attached() {
+				this.forceUpdateDisplay()
+			},
+			forceUpdateDisplay() {
+				this._updateDisplay(this.value, this.noIgnore)
+			},
+			_updateDisplay(value, noIgnore) {
+				this.style.display = (!value && !noIgnore) ? 'none' : 'block'
+			},
+			_blur() {
+				// Remove focus, we don't want it!
+				this.blur()
+			}
+		})
+	</script>
+</dom-module>

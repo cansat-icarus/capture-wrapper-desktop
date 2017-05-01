@@ -1,0 +1,44 @@
+<link rel="import" href="../../bower_components/paper-styles/shadow.html">
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/progress-bubble/progress-bubble.html">
+<link rel="import" href="../../lib/score-bubble-behavior.html">
+<link rel="import" href="../../lib/style.html">
+
+<dom-module id="cg-station-score-big">
+	<template>
+		<style>
+			:host {
+				@apply(--layout-vertical);
+				@apply(--layout-center-center);
+				@apply(--shadow-elevation-4dp);
+
+				background: var(--accent-color);
+				border-radius: 50%;
+				box-sizing: border-box;
+				color: #fff;
+				height: 60px;
+				width: 60px;
+				outline: none;
+				padding: 10px;
+				position: relative;
+			}
+
+			progress-bubble#bubble {
+				text-shadow: none;
+				width: 50px;
+				height: 50px;
+				font-size: 14px;
+				color: #fff;
+				--progress-bubble-bg-stroke-color: rgba(0,0,0,0);
+				--progress-bubble-stroke-color: #fff;
+			}
+		</style>
+		<progress-bubble id="bubble" value="[[value]]" max="100">[[valueText]]</progress-bubble>
+	</template>
+	<script>
+		Polymer({
+			is: 'cg-station-score-big',
+			behaviors: [CGStationScoreBubbleBehavior]
+		})
+	</script>
+</dom-module>

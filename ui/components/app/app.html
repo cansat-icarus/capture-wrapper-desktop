@@ -1,0 +1,160 @@
+<link rel="import" href="../../bower_components/app-layout/app-layout.html">
+<link rel="import" href="../../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../lib/app-header-layout.html">
+<link rel="import" href="../indicator/station-score-small.html">
+<link rel="import" href="drawer.html">
+<link rel="import" href="header-tools.html">
+<link rel="import" href="main.html">
+
+<link rel="import" href="../../lib/style.html">
+
+<dom-module id="cg-app">
+	<template>
+		<style include="iron-flex">
+			app-header-layout {
+				position: relative;
+			}
+
+			app-header {
+				position: absolute;
+				top: 0;
+				left: 0;
+				right: 0;
+				background-color: var(--default-primary-color);
+				color: var(--text-primary-color);
+				-webkit-app-region: drag;
+				user-select: none;
+				-webkit-user-select: none;
+			}
+
+			app-header {
+				z-index: 2;
+			}
+
+			app-drawer {
+				-webkit-app-region: no-drag;
+				--app-drawer-width: 275px;
+			}
+
+			cg-drawer {
+				height: 100%;
+			}
+
+			paper-icon-button {
+				-webkit-app-region: no-drag;
+			}
+
+			app-header paper-icon-button {
+				--paper-icon-button-ink-color: white;
+			}
+
+			#headerTools {
+				padding: 0 1em 1em;
+			}
+
+			#headerTools, #headerStationScoreSpacer {
+				z-index: 1;
+			}
+
+			#headerStationScoreSpacer {
+				height: 10px;
+			}
+
+			#smallIndicator, #smallScore {
+				margin-right: 0.5em;
+			}
+
+			#smallScore, #smallIndicator, #headerTools {
+				will-change: transform;
+				transition: 0.2s transform;
+			}
+
+			.shrink-to-0 {
+				transform: scale3d(0, 0, 0);
+			}
+		</style>
+
+		<app-drawer-layout fullbleed responsive-width="750px">
+			<app-drawer>
+				<cg-drawer></cg-drawer>
+			</app-drawer>
+
+			<cg-app-header-layout id="headerLayout" fullbleed>
+				<app-header id="header" condenses fixed effects="waterfall">
+					<app-toolbar>
+						<paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
+						<div main-title>Icarus CanSat Ground Station</div>
+						<cg-status-indicator
+							id="smallIndicator"
+							color="[[statusColor]]"
+							class="shrink-to-0">[[statusText]]</cg-status-indicator>
+						<cg-station-score-small id="smallScore" class="shrink-to-0"></cg-station-score-small>
+						<paper-icon-button id="maximizeToggleBtn" icon="fullscreen" on-click="_maximizeToggle"></paper-icon-button>
+						<paper-icon-button icon="close" on-click="_close"></paper-icon-button>
+					</app-toolbar>
+					<cg-header-tools id="headerTools" status-color="{{statusColor}}" status-short-text="{{statusText}}"></cg-header-tools>
+					<div id="headerStationScoreSpacer"></div>
+				</app-header>
+
+				<cg-main></cg-main>
+			</cg-app-header-layout>
+		</app-drawer-layout>
+	</template>
+
+	<script>
+		Polymer({
+			is: 'cg-app',
+			_maximizeToggle() {
+				CGBridge.emit('maximize')
+			},
+			_close() {
+				CGBridge.emit('close')
+			},
+			ready() {
+				// Fix dangling white stripes on the side of the header...
+				this.async(this._fixHeaderWidth, 100)
+
+				// Change button icon when maximized/unmaximize
+				CGBridge.on('maximize', maximized => this.$.maximizeToggleBtn.icon = maximized ? 'fullscreen-exit' : 'fullscreen')
+
+				// Hide/show things on the collapsing header
+				window.addEventListener('scroll', () => {
+					setImmediate(() => {
+						const progress = this.$.header.getScrollState().progress
+
+						this.$.smallScore.classList.toggle('shrink-to-0', progress <= 0.5)
+						this.$.smallIndicator.classList.toggle('shrink-to-0', progress <= 0.5)
+						this.$.headerTools.classList.toggle('shrink-to-0', progress > 0.5)
+					})
+				})
+			},
+			_fixHeaderWidth(lastWaitTime = 0, attemptNumber = 1, secondPass = false) {
+				// Get current width of the whole header layout, and the header itself
+				const {width: targetWidth} = this.$.headerLayout.getBoundingClientRect()
+				const {width} = this.$.header.getBoundingClientRect()
+
+				// Calculate how much time we need to wait
+				const waitTime = lastWaitTime + (100 * Math.log10(attemptNumber + 1))
+
+				// Check if we can just stop
+				if (width === targetWidth) {
+					// Sometimes it's briefly correct during load
+					if (!secondPass) {
+						// Do it just one more time to check we were right
+						setTimeout(this._fixHeaderWidth.bind(this, waitTime, attemptNumber + 1, true), waitTime)
+					}
+					return
+				}
+
+				// The fix:
+				this.$.header.resetLayout()
+
+				// Keep going, it has not yet been fixed
+				setTimeout(this._fixHeaderWidth.bind(this, waitTime, attemptNumber + 1), waitTime)
+			}
+		})
+	</script>
+</dom-module>

@@ -1,0 +1,154 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../../bower_components/iron-collapse/iron-collapse.html">
+<link rel="import" href="../../bower_components/iron-a11y-keys-behavior/iron-a11y-keys-behavior.html">
+<link rel="import" href="../../bower_components/juicy-jsoneditor/juicy-jsoneditor.html">
+<link rel="import" href="../../lib/umd-js-libs.html">
+<link rel="import" href="../../lib/style.html">
+
+<dom-module id="cg-log-item">
+	<template>
+		<style>
+			paper-material {
+				margin-bottom: 1em;
+			}
+
+			#header {
+				border-left-style: solid;
+				border-left-width: 0.5em;
+				border-left-color: #000000; /* To be replaced */
+				min-height: 2em;
+
+				display: flex;
+				flex-direction: row;
+				padding-left: 0.5em;
+				align-items: center;
+				justify-content: space-around;
+			}
+
+			#header div {
+				margin: 0 0.5em;
+			}
+
+			.flex {
+				flex: 1;
+			}
+		</style>
+		<paper-material tabindex="0" elevation="1">
+			<div id="header" on-tap="_onTap">
+				<div id="hlevel">[[_level]]</div>
+				<div id="htime">[[_timestamp]]</div>
+				<div id="hmsg">[[data.msg]]</div>
+				<div class="flex"></div>
+			</div>
+			<template is="dom-if" if="[[_enableDetail]]" on-dom-change="_onDetailDOMChange">
+				<iron-collapse id="collapse" on-transitionstart="_startTransition" on-transitionend="_stopTransition">
+					<juicy-jsoneditor id="editor" mode="view" name="Log Object" json="[[data]]" on-tap="_handleEditorTap"></juicy-jsoneditor>
+				</iron-collapse>
+			</template>
+		</paper-material>
+	</template>
+	<script>
+		const BUNYAN_LEVEL_STRINGS = new Map([
+			[10, 'Trace'],
+			[20, 'Debug'],
+			[30, 'Info'],
+			[40, 'Warn'],
+			[50, 'Error'],
+			[60, 'Fatal']
+		])
+
+		const BUNYAN_LEVEL_COLORS = new Map([
+			[10, '#757575'],
+			[20, '#4caf50'],
+			[30, '#039be5'],
+			[40, '#fdd835'],
+			[50, '#f44336'],
+			[60, '#c62828']
+		])
+
+		Polymer({
+			is: 'cg-log-item',
+			behaviors: [
+				Polymer.IronA11yKeysBehavior
+			],
+			properties: {
+				data: Object,
+				index: Number,
+				_enableDetail: {
+					type: Boolean,
+					value: false
+				},
+				_level: {
+					type: String,
+					computed: 'computeLevelStr(data.level)'
+				},
+				_timestamp: {
+					type: String,
+					computed: 'computeTimestamp(data.time)'
+				}
+			},
+			observers: [
+				'observeLevel(data.level)'
+			],
+			keyBindings: {
+				enter: '_onTap'
+			},
+			observeLevel(level) {
+				this.$.header.style.borderLeftColor = BUNYAN_LEVEL_COLORS.get(level) || '#000000'
+			},
+			computeLevelStr(level) {
+				return BUNYAN_LEVEL_STRINGS.get(level) || 'Level?'
+			},
+			computeTimestamp(timestamp) {
+				return moment(timestamp).format('HH:mm:ss')
+			},
+			_tickTransition() {
+				if (!this._transitioning) {
+					return
+				}
+
+				console.log('fire resize')
+				this.fire('iron-resize')
+
+				requestAnimationFrame(this._tickTransition.bind(this))
+			},
+			_startTransition(e) {
+				this._transitioning = e
+				this._tickTransition()
+			},
+			_stopTransition() {
+				this._transitioning = false
+			},
+			_onTap() {
+				// Signal that the collapse should be opened
+				this._shouldOpenCollapse = true
+
+				// Only now will we put the collapse in the DOM
+				// It will be opened when dom-change fires in the template
+				// See _onDetailDOMChange()
+				this._enableDetail = true
+			},
+			_onDetailDOMChange() {
+				if (this._shouldOpenCollapse) {
+					try {
+						// Try opening the collapse
+						this.$$('#collapse').opened = true
+
+						// If we're still here, it was successful! Mark it open
+						this._shouldOpenCollapse = undefined
+
+						// Now we can just toggle it during onTap
+						this.$.collapse = this.$$('#collapse')
+						this._onTap = function () {
+							this.$.collapse.toggle()
+						}
+					} catch (err) {}
+				}
+			},
+			_handleEditorTap(event) {
+				event.stopPropagation()
+			}
+		})
+	</script>
+</dom-module>

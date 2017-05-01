@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Icarus CanSat Ground Station</title>
+
+		<script>
+			// Make polymer behave!
+			window.Polymer = window.Polymer || {}
+			window.Polymer.dom = 'shadow'
+			window.Polymer.lazyRegister = true
+		</script>
+		<script src="bower_components/webcomponentsjs/webcomponents-lite.min.js"></script>
+
+		<link rel="import" href="lib/electron-ipc.html">
+		<link rel="import" href="lib/style.html">
+		<link rel="import" href="components/app/app.html">
+		<link rel="import" href="components/dialog/dialog-protocol.html">
+		<link rel="import" href="bower_components/polymerfire/firebase-app.html">
+	</head>
+	<body unresolved>
+		<!-- Configure Firebase -->
+		<firebase-app
+			api-key="AIzaSyDa4qXyUauIuXuTuKyDiHdhc16XjzrQar0"
+			auth-domain="cansat-icarus-2017.firebaseapp.com"
+			database-url="https://cansat-icarus-2017.firebaseio.com">
+		</firebase-app>
+
+		<cg-app></cg-app>
+		<cg-dialog-protocol id="dialog-protocol"></cg-dialog-protocol>
+	</body>
+</html>

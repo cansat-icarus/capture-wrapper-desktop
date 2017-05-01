@@ -1,0 +1,8 @@
+node_modules
+out
+ui/bower_components
+
+# Make development easier, ignore databases and log files
+db-*
+*.log
+*.log.[0-9]

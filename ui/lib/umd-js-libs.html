@@ -1,0 +1,17 @@
+<script>
+// Temporarily get module.exports out of the way
+window.__theOldModule = window.module
+window.module = undefined
+
+</script>
+
+<script src="../bower_components/eventEmitter/EventEmitter.js"></script>
+<script src="../bower_components/moment/moment.js"></script>
+<script src="../bower_components/moment-timezone/builds/moment-timezone-with-data.min.js"></script>
+
+<script>
+// Restore it!
+window.module = window.__theOldModule
+window.__theOldModule = undefined
+
+</script>
