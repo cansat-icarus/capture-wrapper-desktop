@@ -12,7 +12,7 @@ environment:
 # Cache yarn for speed
 cache:
   - "%LOCALAPPDATA%\\Yarn"
-  - "%USERPROFILE%\.electron"
+  - "%USERPROFILE%\\.electron"
 
 # Install scripts. (runs after repo cloning)
 install:
