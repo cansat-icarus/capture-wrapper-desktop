@@ -31,6 +31,8 @@ cache:
 script: yarn run test
 
 before_deploy:
+  - if [[ $TRAVIS_OS_NAME == "osx" ]]; then brew update; fi
+  - if [[ $TRAVIS_OS_NAME == "osx" ]]; then brew install gcc make; fi # Install required components for native module compilation on macOS
   - yarn global add electron-forge
 
 # Now build things
