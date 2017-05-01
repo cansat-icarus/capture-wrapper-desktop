@@ -118,6 +118,10 @@
       },
       "electronWinstallerConfig": {
         "name": "Icarus Ground Station"
+      },
+      "github_repository": {
+        "owner": "cansat-icarus",
+        "name": "capture-wrapper-desktop"
       }
     }
   }
