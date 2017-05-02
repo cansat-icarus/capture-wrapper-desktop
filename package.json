@@ -101,12 +101,14 @@
     "forge": {
       "make_targets": {
         "win32": [
+          "zip",
           "squirrel"
         ],
         "darwin": [
           "zip"
         ],
         "linux": [
+          "zip",
           "deb",
           "rpm"
         ]
