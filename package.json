@@ -117,7 +117,7 @@
         "packageManager": "yarn"
       },
       "electronWinstallerConfig": {
-        "name": "Icarus Ground Station"
+        "name": "CansatIcarus.GroundStation"
       },
       "github_repository": {
         "owner": "cansat-icarus",
