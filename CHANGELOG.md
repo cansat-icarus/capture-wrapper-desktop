@@ -6,6 +6,12 @@ If you want to really see what changes in the stations, the [capture-lib change 
 ## [v4.0.3] - 2017-05-02
 No changes to code, only to CI configuration.
 
+## [v4.0.3] - 2017-05-02
+No changes to code, only to CI configuration.
+
+There are no binaries available for this release.
+Windows build failed.
+
 ## [v4.0.2] - 2017-05-02
 No changes to code, only to CI configuration.
 
@@ -29,6 +35,7 @@ What we have now:
 - Automatic notifications for capture-lib errors
 - Critical control locking mechanism, to prevent accidentally stopping data reception. Automatically activated in the protocol routine for opening the station.
 
+[v4.0.4]: https://github.com/cansat-icarus/capture-wrapper-desktop/compare/v4.0.3...v4.0.4
 [v4.0.3]: https://github.com/cansat-icarus/capture-wrapper-desktop/compare/v4.0.2...v4.0.3
 [v4.0.2]: https://github.com/cansat-icarus/capture-wrapper-desktop/compare/v4.0.1...v4.0.2
 [v4.0.1]: https://github.com/cansat-icarus/capture-wrapper-desktop/compare/v4.0.0...v4.0.1
