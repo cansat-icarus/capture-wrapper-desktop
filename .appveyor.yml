@@ -26,5 +26,5 @@ test: off # We test in Travis CI, no need for doing it more than once
 
 # Build and publish to github (only on tag pushes)
 deploy_script:
-  - yarn global add --ignore-platform electron-forge
+  - npm install -g electron-forge # Yarn does not let us install it...
   - electron-forge publish
