@@ -2,7 +2,7 @@
   "name": "capture-wrapper-desktop",
   "private": true,
   "productName": "IcarusCanSatGroundStationDesktop",
-  "version": "4.0.3",
+  "version": "4.0.4",
   "description": "Ground station software for the Icarus CanSat (Desktop version)",
   "bugs": {
     "url": "https://github.com/cansat-icarus/capture-wrapper-desktop/issues"
@@ -101,12 +101,14 @@
     "forge": {
       "make_targets": {
         "win32": [
+          "zip",
           "squirrel"
         ],
         "darwin": [
           "zip"
         ],
         "linux": [
+          "zip",
           "deb",
           "rpm"
         ]
@@ -117,7 +119,7 @@
         "packageManager": "yarn"
       },
       "electronWinstallerConfig": {
-        "name": "Icarus Ground Station"
+        "name": "CansatIcarus.GroundStation"
       },
       "github_repository": {
         "owner": "cansat-icarus",
